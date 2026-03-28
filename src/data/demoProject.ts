@@ -261,7 +261,7 @@ export const edithFinchDemo: ProjectData = {
     { id: 'dawn', firstName: 'Dawn', lastName: 'Finch', sex: 'F', birth: { value: '1971' }, death: { value: '2016' }, deceased: true, fatherId: 'sam', motherId: 'kay' },
     { id: 'sanjay', firstName: 'Sanjay', lastName: 'Kumar', sex: 'M', birth: { value: '1970' }, death: { value: '2002' }, deceased: true },
     { id: 'lewis', firstName: 'Lewis', lastName: 'Finch', sex: 'M', birth: { value: '1988' }, death: { value: '2010' }, deceased: true, fatherId: 'sanjay', motherId: 'dawn' },
-    { id: 'milton', firstName: 'Milton', lastName: 'Finch', sex: 'M', birth: { value: '1991' }, death: { value: '2003' }, deceased: true, fatherId: 'sanjay', motherId: 'dawn' },
+    { id: 'milton', firstName: 'Milton', lastName: 'Finch', sex: 'M', birth: { value: '1991' }, death: { value: '2003', uncertain: true }, deceased: true, fatherId: 'sanjay', motherId: 'dawn' },
     { id: 'edith', firstName: 'Edith', lastName: 'Finch', sex: 'F', birth: { value: '2000' }, death: { value: '2017' }, deceased: true, fatherId: 'sanjay', motherId: 'dawn' },
     { id: 'christopher', firstName: 'Christopher', lastName: 'Finch', sex: 'M', birth: { value: '2017' }, motherId: 'edith' },
   ],

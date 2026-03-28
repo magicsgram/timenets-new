@@ -492,21 +492,29 @@ export function TimelineCanvas(props: TimelineCanvasProps) {
             const age = currentYear - birthYear;
             const likelyDeceased = !entry.person.death && !entry.person.deceased && age > 130;
             const isAlive = !entry.person.death && !entry.person.deceased && !likelyDeceased;
-            const needsFade = likelyDeceased || isAlive;
+            const birthUncertain = !!entry.person.birth?.uncertain;
+            const deathUncertain = !!entry.person.death?.uncertain;
+            const needsFade = likelyDeceased || isAlive || deathUncertain || birthUncertain;
             const birthUncertainStart = yearToX(birthYear - uncertaintyYears);
             const birthX = yearToX(birthYear);
             const deathX = yearToX(deathYear);
             const deathUncertainEnd = yearToX(deathYear + uncertaintyYears);
-            const fadeStartX = likelyDeceased ? birthX + (deathX - birthX) * 0.7 : yearToX(currentYear);
+            const fadeEndX = deathUncertain
+              ? birthX + (deathX - birthX) * 0.7
+              : likelyDeceased ? birthX + (deathX - birthX) * 0.7 : yearToX(currentYear);
+            const fadeBirthEndX = birthUncertain
+              ? birthX + (deathX - birthX) * 0.3
+              : birthX;
             const fadeGradientId = `fade-${entry.person.id}`;
 
             return (
               <g key={entry.person.id} style={{ opacity: entry.emphasis }}>
                 {needsFade && (
                   <linearGradient id={fadeGradientId} x1={birthX} x2={deathX} y1="0" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stopColor={color} stopOpacity={1} />
-                    <stop offset={`${((fadeStartX - birthX) / (deathX - birthX)) * 100}%`} stopColor={color} stopOpacity={1} />
-                    <stop offset="100%" stopColor={color} stopOpacity={0} />
+                    <stop offset="0%" stopColor={color} stopOpacity={birthUncertain ? 0 : 1} />
+                    <stop offset={`${((fadeBirthEndX - birthX) / (deathX - birthX)) * 100}%`} stopColor={color} stopOpacity={1} />
+                    <stop offset={`${((fadeEndX - birthX) / (deathX - birthX)) * 100}%`} stopColor={color} stopOpacity={1} />
+                    <stop offset="100%" stopColor={color} stopOpacity={(deathUncertain || likelyDeceased || isAlive) ? 0 : 1} />
                   </linearGradient>
                 )}
                 {entry.person.birth?.uncertain ? (
@@ -550,8 +558,10 @@ export function TimelineCanvas(props: TimelineCanvasProps) {
                 >
                   {getPersonName(entry.person)}
                   <tspan fontSize={labelFontSize * 0.75}>
-                    {' '}({birthYear}{entry.person.birth?.uncertain ? '?' : ''}–{entry.person.deceased || entry.person.death ? `${deathYear}${entry.person.death?.uncertain ? '?' : ''}` : ''}
-                    {(entry.person.deceased || entry.person.death) ? `. Age: ${deathYear - birthYear}${entry.person.birth?.uncertain || entry.person.death?.uncertain ? '?' : ''}` : ''})
+                    {' '}({birthYear}{entry.person.birth?.uncertain ? '?' : ''}–{entry.person.deceased || entry.person.death ? `${deathYear}${entry.person.death?.uncertain ? '?' : ''}` : ''})
+                    {(entry.person.deceased || entry.person.death)
+                      ? ` (Age: ${deathYear - birthYear}${entry.person.birth?.uncertain || entry.person.death?.uncertain ? '?' : ''})`
+                      : ` (Current age: ${currentYear - birthYear}${entry.person.birth?.uncertain ? '?' : ''})`}
                   </tspan>
                 </text>
               </g>
