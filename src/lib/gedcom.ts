@@ -87,26 +87,15 @@ function parseGedcomLine(line: string): GedcomLine | null {
   };
 }
 
-function parseName(rawName: string): Pick<Person, 'firstName' | 'lastName'> {
+function parseName(rawName: string): Pick<Person, 'name'> {
   const cleaned = rawName.replace(/\s+/g, ' ').trim();
   const slashMatch = /^(.*?)\/(.*?)\/(.*)$/.exec(cleaned);
   if (slashMatch) {
     const given = `${slashMatch[1]} ${slashMatch[3]}`.replace(/\s+/g, ' ').trim();
-    return {
-      firstName: given || 'Unknown',
-      lastName: slashMatch[2].trim(),
-    };
+    const surname = slashMatch[2].trim();
+    return { name: [given, surname].filter(Boolean).join(' ') || 'Unknown' };
   }
-
-  const parts = cleaned.split(' ').filter(Boolean);
-  if (parts.length <= 1) {
-    return { firstName: parts[0] ?? 'Unknown', lastName: '' };
-  }
-
-  return {
-    firstName: parts.slice(0, -1).join(' '),
-    lastName: parts.at(-1) ?? '',
-  };
+  return { name: cleaned || 'Unknown' };
 }
 
 function parseGedcomDate(rawDate?: string): UncertainDate | undefined {
@@ -319,12 +308,11 @@ export function parseGedcomProject(source: string, fileName = 'import.ged'): Pro
     const familyOfOrigin = record.famcIds.map((id) => families.get(id)).find(Boolean);
     const birthEvent = record.events.find((event) => event.tag === 'BIRT');
     const deathEvent = record.events.find((event) => event.tag === 'DEAT');
-    const { firstName, lastName } = parseName(record.name ?? record.id);
+    const { name } = parseName(record.name ?? record.id);
 
     return {
       id: record.id,
-      firstName,
-      lastName,
+      name,
       sex: record.sex ?? 'U',
       birth: parseGedcomDate(birthEvent?.date),
       death: parseGedcomDate(deathEvent?.date),

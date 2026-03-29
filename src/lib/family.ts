@@ -35,7 +35,7 @@ export function buildFamilyIndex(project: ProjectData): FamilyIndex {
 }
 
 export function getPersonName(person: Person): string {
-  return [person.firstName, person.lastName].filter(Boolean).join(' ').trim() || person.id;
+  return person.name || person.id;
 }
 
 export function getSpouseIds(personId: string, index: FamilyIndex): string[] {

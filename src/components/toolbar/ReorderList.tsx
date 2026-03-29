@@ -39,7 +39,7 @@ export function ReorderList(props: ReorderListProps) {
 
           return (
             <li key={person.id} className="reorder-item">
-              <span className="reorder-name">{person.firstName} {person.lastName}</span>
+              <span className="reorder-name">{person.name}</span>
               <span className="reorder-buttons">
                 <button type="button" disabled={index === 0} onClick={moveUp} aria-label="Move up">&#x25B2;</button>
                 <button type="button" disabled={index === orderedPeople.length - 1} onClick={moveDown} aria-label="Move down">&#x25BC;</button>

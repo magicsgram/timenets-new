@@ -26,7 +26,7 @@ export function RootSelector(props: RootSelectorProps) {
       <select value={rootId} onChange={(event) => onRootChange(event.target.value)}>
         {project.people.map((person) => (
           <option key={person.id} value={person.id}>
-            {person.firstName} {person.lastName}
+            {person.name}
           </option>
         ))}
       </select>

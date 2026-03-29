@@ -41,7 +41,7 @@ describe('parseGedcomProject', () => {
     expect(project.events).toHaveLength(1);
     expect(project.meta.name).toBe('sample');
 
-    const sofia = project.people.find((person) => person.firstName === 'Sofia');
+    const sofia = project.people.find((person) => person.name.startsWith('Sofia'));
     expect(sofia?.fatherId).toBe('I1');
     expect(sofia?.motherId).toBe('I2');
     expect(sofia?.birth?.value).toBe('1990-04-04');

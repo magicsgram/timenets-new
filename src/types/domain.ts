@@ -9,8 +9,7 @@ export interface UncertainDate {
 
 export interface Person {
   id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   sex: Sex;
   birth?: UncertainDate;
   death?: UncertainDate;

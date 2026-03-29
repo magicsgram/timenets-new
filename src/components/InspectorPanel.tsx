@@ -65,17 +65,10 @@ export function InspectorPanel(props: InspectorPanelProps) {
 
         <div className="form-grid">
           <label>
-            First name
+            Name
             <input
-              value={selectedPerson.firstName}
-              onChange={(event) => onUpdatePerson({ ...selectedPerson, firstName: event.target.value })}
-            />
-          </label>
-          <label>
-            Last name
-            <input
-              value={selectedPerson.lastName}
-              onChange={(event) => onUpdatePerson({ ...selectedPerson, lastName: event.target.value })}
+              value={selectedPerson.name}
+              onChange={(event) => onUpdatePerson({ ...selectedPerson, name: event.target.value })}
             />
           </label>
           <label>
