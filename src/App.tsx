@@ -1,7 +1,9 @@
-import { startTransition, useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { startTransition, useDeferredValue, useMemo, useState } from 'react';
 import { TimelineCanvas } from './components/TimelineCanvas';
 import { Toolbar } from './components/Toolbar';
 import { emptyProject } from './data/demoProject';
+import { useProjectPersistence } from './hooks/useProjectPersistence';
+import { useViewSettings } from './hooks/useViewSettings';
 import { createTimelineLayout } from './lib/layout';
 import { downloadProject, parseImportedProject, extractViewSettings } from './lib/io';
 import type { ViewSettings } from './lib/io';
@@ -15,13 +17,23 @@ export default function App() {
   const [rootId, setRootId] = useState(project.rootPersonId);
   const [selectedPersonId, setSelectedPersonId] = useState(project.rootPersonId);
   const [range, setRange] = useState<VisibleRange | null>(null);
-  const [customOrder, setCustomOrder] = useState<string[]>([]);
-  const [curvature, setCurvature] = useState(2);
-  const [spacing, setSpacing] = useState(28);
-  const [rootCentric, setRootCentric] = useState(false);
+  const {
+    curvature,
+    setCurvature,
+    spacing,
+    setSpacing,
+    rootCentric,
+    setRootCentric,
+    customOrder,
+    setCustomOrder,
+    applyViewSettings,
+    serializedViewSettings,
+  } = useViewSettings();
   const [, setStatus] = useState('Loaded demo dataset.');
 
   const deferredProject = useDeferredValue(project);
+
+  useProjectPersistence(project, storageKey);
 
   const layout = useMemo(() => {
     return createTimelineLayout({
@@ -29,24 +41,10 @@ export default function App() {
       rootId,
       mode: 'hourglass',
       focusId: selectedPersonId,
-      doiRadius: Infinity,
       visibleRange: range ?? undefined,
       customOrder: customOrder.length > 0 ? customOrder : undefined,
     });
   }, [deferredProject, range, rootId, selectedPersonId, customOrder]);
-
-  useEffect(() => {
-    window.localStorage.setItem(storageKey, JSON.stringify(project));
-  }, [project]);
-
-  useEffect(() => {
-    const handler = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-    };
-
-    window.addEventListener('beforeunload', handler);
-    return () => window.removeEventListener('beforeunload', handler);
-  }, []);
 
   const setProjectAndSync = (nextProject: ProjectData, message: string) => {
     startTransition(() => {
@@ -68,12 +66,11 @@ export default function App() {
     });
   };
 
-  const applyViewSettings = (settings: ViewSettings) => {
-    if (settings.curvature !== undefined) setCurvature(settings.curvature);
-    if (settings.spacing !== undefined) setSpacing(settings.spacing);
-    if (settings.rootCentric !== undefined) setRootCentric(settings.rootCentric);
-    if (settings.customOrder !== undefined) setCustomOrder(settings.customOrder);
-    if (settings.rootId !== undefined) setRootId(settings.rootId);
+  const handleApplyViewSettings = (settings: ViewSettings) => {
+    applyViewSettings(settings);
+    if (settings.rootId !== undefined) {
+      setRootId(settings.rootId);
+    }
   };
 
   const handleImport = async (file: File) => {
@@ -85,7 +82,7 @@ export default function App() {
       try {
         const parsed = JSON.parse(source) as unknown;
         const settings = extractViewSettings(parsed);
-        if (settings) applyViewSettings(settings);
+        if (settings) handleApplyViewSettings(settings);
       } catch {
         // Not JSON (e.g. GEDCOM) — no view settings to restore
       }
@@ -137,7 +134,7 @@ export default function App() {
             void handleImport(file);
           }}
           onExport={() => {
-            const settings: ViewSettings = { curvature, spacing, rootCentric, customOrder, rootId };
+            const settings: ViewSettings = { ...serializedViewSettings, rootId };
             downloadProject(project, settings);
             setStatus('Exported project JSON.');
           }}

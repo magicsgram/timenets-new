@@ -1,9 +1,8 @@
-import { clamp, yearFromDate } from './dates';
+import { yearFromDate } from './dates';
 import {
   buildFamilyIndex,
   getChildrenIds,
   getIncludedIds,
-  getKinshipDistances,
   getPersonName,
   getSpouseIds,
 } from './family';
@@ -17,8 +16,15 @@ import type {
   VisibleRange,
 } from '../types/domain';
 
-function resolveGeneration(rootId: string, includedIds: Set<string>, project: ProjectData): Map<string, number> {
-  const byId = new Map(project.people.map((person) => [person.id, person]));
+interface LayoutComputationContext {
+  project: ProjectData;
+  index: ReturnType<typeof buildFamilyIndex>;
+  peopleById: Map<string, ProjectData['people'][number]>;
+  currentYear: number;
+}
+
+function resolveGeneration(rootId: string, includedIds: Set<string>, context: LayoutComputationContext): Map<string, number> {
+  const { project, index, peopleById } = context;
   const generation = new Map<string, number>([[rootId, 0]]);
   const queue = [rootId];
 
@@ -28,7 +34,7 @@ function resolveGeneration(rootId: string, includedIds: Set<string>, project: Pr
       continue;
     }
 
-    const person = byId.get(currentId);
+    const person = peopleById.get(currentId);
     if (!person) {
       continue;
     }
@@ -55,8 +61,6 @@ function resolveGeneration(rootId: string, includedIds: Set<string>, project: Pr
       }
     }
   }
-
-  const index = buildFamilyIndex(project);
 
   for (const person of project.people) {
     if (!includedIds.has(person.id) || generation.has(person.id)) {
@@ -88,10 +92,10 @@ function getPersonSpan(person: ProjectData['people'][number], currentYear: numbe
   };
 }
 
-function comparePersonIds(leftId: string, rightId: string, project: ProjectData, currentYear: number): number {
-  const byId = new Map(project.people.map((person) => [person.id, person]));
-  const left = byId.get(leftId);
-  const right = byId.get(rightId);
+function comparePersonIds(leftId: string, rightId: string, context: LayoutComputationContext): number {
+  const { peopleById, currentYear } = context;
+  const left = peopleById.get(leftId);
+  const right = peopleById.get(rightId);
   if (!left || !right) {
     return leftId.localeCompare(rightId);
   }
@@ -104,8 +108,8 @@ function comparePersonIds(leftId: string, rightId: string, project: ProjectData,
   return getPersonName(left).localeCompare(getPersonName(right));
 }
 
-function compareSpouses(personId: string, leftId: string, rightId: string, project: ProjectData, currentYear: number): number {
-  const index = buildFamilyIndex(project);
+function compareSpouses(personId: string, leftId: string, rightId: string, context: LayoutComputationContext): number {
+  const { index, currentYear } = context;
   const marriages = index.marriagesByPersonId.get(personId) ?? [];
   const leftMarriage = marriages.find((marriage) => marriage.person1Id === leftId || marriage.person2Id === leftId);
   const rightMarriage = marriages.find((marriage) => marriage.person1Id === rightId || marriage.person2Id === rightId);
@@ -116,29 +120,26 @@ function compareSpouses(personId: string, leftId: string, rightId: string, proje
     return leftStart - rightStart;
   }
 
-  return comparePersonIds(leftId, rightId, project, currentYear);
+  return comparePersonIds(leftId, rightId, context);
 }
 
-function getSortedChildrenIds(personId: string, project: ProjectData): string[] {
-  const index = buildFamilyIndex(project);
-  const currentYear = new Date().getFullYear();
-  return [...getChildrenIds(personId, index)].sort((left, right) => comparePersonIds(right, left, project, currentYear));
+function getSortedChildrenIds(personId: string, context: LayoutComputationContext): string[] {
+  const { index } = context;
+  return [...getChildrenIds(personId, index)].sort((left, right) => comparePersonIds(right, left, context));
 }
 
-function getSortedSpouseIds(personId: string, project: ProjectData): string[] {
-  const index = buildFamilyIndex(project);
-  const currentYear = new Date().getFullYear();
-  return [...getSpouseIds(personId, index)].sort((left, right) => compareSpouses(personId, left, right, project, currentYear));
+function getSortedSpouseIds(personId: string, context: LayoutComputationContext): string[] {
+  const { index } = context;
+  return [...getSpouseIds(personId, index)].sort((left, right) => compareSpouses(personId, left, right, context));
 }
 
 function buildAncestorOrder(
   personId: string,
-  project: ProjectData,
   includedIds: Set<string>,
   placed: Set<string>,
+  context: LayoutComputationContext,
 ): string[] {
-  const byId = new Map(project.people.map((person) => [person.id, person]));
-  const person = byId.get(personId);
+  const person = context.peopleById.get(personId);
   if (!person) {
     return [];
   }
@@ -153,13 +154,13 @@ function buildAncestorOrder(
   });
 
   for (const parentId of parentIds) {
-    result.push(...buildAncestorOrder(parentId, project, includedIds, placed));
+    result.push(...buildAncestorOrder(parentId, includedIds, placed, context));
     if (!placed.has(parentId)) {
       placed.add(parentId);
       result.push(parentId);
     }
 
-    for (const spouseId of getSortedSpouseIds(parentId, project)) {
+    for (const spouseId of getSortedSpouseIds(parentId, context)) {
       if (!includedIds.has(spouseId) || spouseId === person.fatherId || spouseId === person.motherId || placed.has(spouseId)) {
         continue;
       }
@@ -174,13 +175,13 @@ function buildAncestorOrder(
 
 function buildDescendantOrder(
   personId: string,
-  project: ProjectData,
   includedIds: Set<string>,
   placed: Set<string>,
+  context: LayoutComputationContext,
 ): string[] {
-  const byId = new Map(project.people.map((person) => [person.id, person]));
+  const { peopleById } = context;
   const result: string[] = [];
-  const sortedSpouses = getSortedSpouseIds(personId, project).filter((spouseId) => includedIds.has(spouseId));
+  const sortedSpouses = getSortedSpouseIds(personId, context).filter((spouseId) => includedIds.has(spouseId));
 
   // Place all spouses adjacent to the focus person (AS: spouses in same block)
   for (const spouseId of sortedSpouses) {
@@ -194,8 +195,8 @@ function buildDescendantOrder(
   const handledChildren = new Set<string>();
 
   for (const spouseId of sortedSpouses) {
-    const sharedChildren = getSortedChildrenIds(personId, project).filter((childId) => {
-      const child = byId.get(childId);
+    const sharedChildren = getSortedChildrenIds(personId, context).filter((childId) => {
+      const child = peopleById.get(childId);
       if (!child) {
         return false;
       }
@@ -211,11 +212,11 @@ function buildDescendantOrder(
         placed.add(childId);
         result.push(childId);
       }
-      result.push(...buildDescendantOrder(childId, project, includedIds, placed));
+      result.push(...buildDescendantOrder(childId, includedIds, placed, context));
     }
   }
 
-  for (const childId of getSortedChildrenIds(personId, project)) {
+  for (const childId of getSortedChildrenIds(personId, context)) {
     if (!includedIds.has(childId) || handledChildren.has(childId)) {
       continue;
     }
@@ -224,18 +225,23 @@ function buildDescendantOrder(
       placed.add(childId);
       result.push(childId);
     }
-    result.push(...buildDescendantOrder(childId, project, includedIds, placed));
+    result.push(...buildDescendantOrder(childId, includedIds, placed, context));
   }
 
   return result;
 }
 
-function buildOrderedPeople(rootId: string, mode: RepresentationMode, project: ProjectData, includedIds: Set<string>): string[] {
+function buildOrderedPeople(
+  rootId: string,
+  mode: RepresentationMode,
+  includedIds: Set<string>,
+  context: LayoutComputationContext,
+): string[] {
   const placed = new Set<string>();
   const orderedIds: string[] = [];
 
   if (mode === 'hourglass' || mode === 'pedigree') {
-    orderedIds.push(...buildAncestorOrder(rootId, project, includedIds, placed));
+    orderedIds.push(...buildAncestorOrder(rootId, includedIds, placed, context));
   }
 
   if (!placed.has(rootId)) {
@@ -243,10 +249,9 @@ function buildOrderedPeople(rootId: string, mode: RepresentationMode, project: P
     orderedIds.push(rootId);
   }
 
-  orderedIds.push(...buildDescendantOrder(rootId, project, includedIds, placed));
+  orderedIds.push(...buildDescendantOrder(rootId, includedIds, placed, context));
 
-  const generations = resolveGeneration(rootId, includedIds, project);
-  const currentYear = new Date().getFullYear();
+  const generations = resolveGeneration(rootId, includedIds, context);
   const leftovers = Array.from(includedIds).filter((id) => !placed.has(id));
   leftovers.sort((left, right) => {
     const generationDelta = (generations.get(left) ?? 0) - (generations.get(right) ?? 0);
@@ -254,7 +259,7 @@ function buildOrderedPeople(rootId: string, mode: RepresentationMode, project: P
       return generationDelta;
     }
 
-    return comparePersonIds(left, right, project, currentYear);
+    return comparePersonIds(left, right, context);
   });
 
   orderedIds.push(...leftovers);
@@ -266,20 +271,24 @@ export function createTimelineLayout(options: {
   rootId: string;
   mode: RepresentationMode;
   focusId: string;
-  doiRadius: number;
   visibleRange?: VisibleRange;
   customOrder?: string[];
 }): TimelineLayout {
-  const { project, rootId, mode, focusId, doiRadius, visibleRange, customOrder } = options;
+  const { project, rootId, mode, visibleRange, customOrder } = options;
   const index = buildFamilyIndex(project);
-  const includedIds = getIncludedIds(rootId, mode, index);
-  const generations = resolveGeneration(rootId, includedIds, project);
-  const distances = getKinshipDistances(focusId, index);
+  const peopleById = new Map(project.people.map((person) => [person.id, person]));
   const currentYear = new Date().getFullYear();
+  const context: LayoutComputationContext = {
+    project,
+    index,
+    peopleById,
+    currentYear,
+  };
+  const includedIds = new Set(project.people.map((p) => p.id));
+  const generations = resolveGeneration(rootId, includedIds, context);
   const orderedIds = customOrder && customOrder.length > 0
     ? customOrder.filter((id) => includedIds.has(id))
-    : buildOrderedPeople(rootId, mode, project, includedIds);
-  const peopleById = new Map(project.people.map((person) => [person.id, person]));
+    : project.people.map((p) => p.id).filter((id) => includedIds.has(id));
 
   const people = orderedIds
     .map((id) => peopleById.get(id))
@@ -287,8 +296,7 @@ export function createTimelineLayout(options: {
 
   const layoutPeople: LayoutPerson[] = people.map((person, lane) => {
     const personSpan = getPersonSpan(person, currentYear);
-    const distance = distances.get(person.id);
-    const emphasis = distance === undefined ? 0.16 : distance <= doiRadius ? 1 : clamp(0.82 - (distance - doiRadius) * 0.18, 0.18, 0.82);
+    const emphasis = 1;
 
     return {
       person,

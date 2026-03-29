@@ -1,16 +1,12 @@
-# TimeNets JS
+# TimeNets New
 
-This folder now contains the first implementation pass of the standalone TimeNets rewrite: a static React and TypeScript app with an offline genealogy model, a TimeNets-inspired SVG visualization, local JSON import and export, and editor panels for people, marriages, and events.
+This project is a port of the original TimeNets ActionScript code written by Nam Wook Kim.
 
-## What is implemented
+It is also a tribute to his work on genealogical visualization and the original TimeNets research, which remains the foundation for this codebase.
 
-- Vite-based static app output that works from local hosting.
-- TimeNets-style lifeline ribbons with red and blue gender encoding, orange event markers, and marriage connectors.
-- Three representation modes: hourglass, pedigree, and descendant.
-- Root-person switching, selection, mouse drag panning, wheel zooming, and DOI-based emphasis.
-- Local JSON and GEDCOM import, JSON export, and local-storage persistence for the active project.
-- Editable demo dataset seeded from the legacy domain concepts.
-- Root-centered layout ordering that keeps ancestors above the focus person and descendants below, closer to the legacy Flash behavior.
+- Original ActionScript repository: https://github.com/namwkim/timenets
+- Research page: https://idl.uw.edu/papers/timenets
+- Nam Wook Kim research page: https://www.namwkim.org/
 
 ## Run locally
 
@@ -32,24 +28,6 @@ To run the automated checks:
 ```sh
 pnpm test
 ```
-
-## Deploy to GitHub Pages
-
-This repo is configured to publish the app to GitHub Pages through GitHub Actions.
-
-Deployment workflow:
-
-- The workflow file lives at `.github/workflows/deploy-pages.yml` in this repository.
-- A push to `main` or `master` will build this app and deploy `dist/` to GitHub Pages.
-- Manual deployment is also available through the `workflow_dispatch` trigger in GitHub Actions.
-
-Required GitHub repo setting:
-
-1. Open the GitHub repository settings.
-2. Go to Pages.
-3. Set the source to `GitHub Actions`.
-
-If the repository does not yet have a GitHub remote, create one and push this folder as its own repository before expecting Pages deployment to run.
 
 ## Project shape
 

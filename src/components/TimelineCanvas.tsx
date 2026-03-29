@@ -1,7 +1,9 @@
-import { useMemo, useRef, useState, type PointerEventHandler, type WheelEventHandler } from 'react';
-import { clamp, yearFromDate } from '../lib/dates';
+import { useMemo } from 'react';
+import { yearFromDate } from '../lib/dates';
 import { getPersonName } from '../lib/family';
-import type { LayoutPerson, ProjectData, TimelineLayout } from '../types/domain';
+import { useSvgViewport } from '../hooks/useSvgViewport';
+import { buildLifelinePoints, buildPath, getPersonColor, interpolateLifeline, type PersonGeometry } from '../lib/timelineGeometry';
+import type { ProjectData, TimelineLayout } from '../types/domain';
 
 interface TimelineCanvasProps {
   project: ProjectData;
@@ -15,206 +17,13 @@ interface TimelineCanvasProps {
   onRootChange: (personId: string) => void;
 }
 
-type LifelinePointType = 'born' | 'dating' | 'marriage' | 'divorce' | 'resting' | 'dead';
-
-interface LifelinePoint {
-  type: LifelinePointType;
-  year: number;
-  y: number;
-  marriageId?: string;
-}
-
-interface PersonGeometry {
-  path: string;
-  points: LifelinePoint[];
-}
-
-const maleColor = '#3d6ea8';
-const femaleColor = '#a83d3d';
-const unknownColor = '#555753';
 const ribbonAlpha = 0.7;
 const uncertaintyYears = 3;
 const labelColor = '#2e3436';
-const curveWidth = 30; // fixed horizontal control-point offset for consistent curvature
-
-function createEventPoint(type: LifelinePointType, year: number, y: number, marriageId?: string): LifelinePoint {
-  return { type, year, y, marriageId };
-}
-
-function getPersonColor(sex: LayoutPerson['person']['sex']): string {
-  if (sex === 'M') {
-    return maleColor;
-  }
-  if (sex === 'F') {
-    return femaleColor;
-  }
-  return unknownColor;
-}
-
-function buildLifelinePoints(
-  entry: LayoutPerson,
-  project: ProjectData,
-  _laneByPersonId: Map<string, number>,
-  laneToY: (lane: number) => number,
-  alphaYears: number,
-  marriageYMap: Map<string, number>,
-): LifelinePoint[] {
-  const baselineY = laneToY(entry.lane);
-  const rawPoints: LifelinePoint[] = [createEventPoint('born', entry.startYear, baselineY)];
-  const marriages = project.marriages
-    .filter((marriage) => marriage.person1Id === entry.person.id || marriage.person2Id === entry.person.id)
-    .sort((left, right) => (yearFromDate(left.start) ?? 0) - (yearFromDate(right.start) ?? 0));
-
-  marriages.forEach((marriage) => {
-    const startYear = yearFromDate(marriage.start);
-    if (!startYear) {
-      return;
-    }
-
-    const marriageY = marriageYMap.get(`${marriage.id}:${entry.person.id}`) ?? baselineY;
-
-    rawPoints.push(createEventPoint('marriage', startYear, marriageY, marriage.id));
-
-    if (marriage.divorced) {
-      const endYear = yearFromDate(marriage.end);
-      if (endYear) {
-        rawPoints.push(createEventPoint('divorce', endYear, marriageY, marriage.id));
-      }
-    }
-  });
-
-  // Build a clean sequence: for each marriage, emit marriage + divorce points.
-  // If a marriage has no divorce, infer an end just before the next marriage starts.
-  const sortedMarriages = rawPoints
-    .slice(1)
-    .sort((left, right) => left.year - right.year);
-
-  const filteredPoints: LifelinePoint[] = [rawPoints[0]];
-
-  // Group by marriage/divorce pairs
-  const marriageStarts = sortedMarriages.filter((p) => p.type === 'marriage');
-  const divorcesByMarriage = new Map(
-    sortedMarriages.filter((p) => p.type === 'divorce').map((p) => [p.marriageId, p]),
-  );
-
-  marriageStarts.forEach((mar, idx) => {
-    filteredPoints.push(mar);
-
-    const divorce = divorcesByMarriage.get(mar.marriageId);
-    if (divorce) {
-      filteredPoints.push(divorce);
-    } else {
-      const nextMarriage = marriageStarts[idx + 1];
-      if (nextMarriage) {
-        // Infer end before next marriage
-        const inferredEndYear = nextMarriage.year - 1;
-        if (inferredEndYear > mar.year) {
-          filteredPoints.push(createEventPoint('divorce', inferredEndYear, mar.y, mar.marriageId));
-        }
-      }
-      // If no next marriage and no divorce, marriage is ongoing — don't add a divorce point
-    }
-  });
-
-  const lastPoint = filteredPoints[filteredPoints.length - 1];
-  const isStillMarried = lastPoint.type === 'marriage';
-  filteredPoints.push(createEventPoint('dead', entry.endYear, isStillMarried ? lastPoint.y : (lastPoint.type === 'divorce' ? baselineY : lastPoint.y)));
-
-  const expandedPoints: LifelinePoint[] = [];
-  filteredPoints.forEach((point, index) => {
-    if (point.type === 'marriage') {
-      const prevPoint = filteredPoints[index - 1];
-      const lowerBound = prevPoint ? (prevPoint.type === 'born' ? prevPoint.year : (prevPoint.year + point.year) / 2) : point.year - alphaYears;
-      const datingYear = Math.max(point.year - alphaYears, lowerBound);
-      if (datingYear < point.year) {
-        expandedPoints.push(createEventPoint('dating', datingYear, baselineY, point.marriageId));
-      }
-    }
-
-    expandedPoints.push(point);
-
-    if (point.type === 'divorce') {
-      const nextPoint = filteredPoints[index + 1];
-      const upperBound = nextPoint ? (nextPoint.type === 'dead' ? nextPoint.year : (nextPoint.year + point.year) / 2) : point.year + alphaYears;
-      const restingYear = Math.min(point.year + alphaYears, upperBound);
-      if (restingYear > point.year) {
-        expandedPoints.push(createEventPoint('resting', restingYear, baselineY, point.marriageId));
-      }
-    }
-  });
-
-  const minGap = 1;
-  for (let index = 1; index < expandedPoints.length; index += 1) {
-    const previous = expandedPoints[index - 1];
-    const current = expandedPoints[index];
-    if (current.year - previous.year < minGap && current.type !== 'dead') {
-      current.year = previous.year + minGap;
-    }
-  }
-
-  return expandedPoints;
-}
-
-function buildPath(points: LifelinePoint[], yearToX: (year: number) => number): string {
-  let path = '';
-
-  points.forEach((point, index) => {
-    const x = yearToX(point.year);
-    if (point.type === 'born') {
-      path += `M ${x} ${point.y}`;
-      return;
-    }
-
-    if (point.type === 'dating' || point.type === 'divorce' || point.type === 'dead') {
-      path += ` L ${x} ${point.y}`;
-      return;
-    }
-
-    if (point.type === 'marriage') {
-      const previous = points[index - 1];
-      const previousX = yearToX(previous.year);
-      const halfSpan = Math.min(curveWidth, (x - previousX) / 2);
-      path += ` C ${previousX + halfSpan} ${previous.y}, ${x - halfSpan} ${point.y}, ${x} ${point.y}`;
-      return;
-    }
-
-    if (point.type === 'resting') {
-      const previous = points[index - 1];
-      const previousX = yearToX(previous.year);
-      const halfSpan = Math.min(curveWidth, (x - previousX) / 2);
-      path += ` C ${previousX + halfSpan} ${previous.y}, ${x - halfSpan} ${point.y}, ${x} ${point.y}`;
-      return;
-    }
-  });
-
-  return path;
-}
-
-function interpolateLifeline(points: LifelinePoint[], year: number): number {
-  if (points.length === 0) return 0;
-  if (year <= points[0].year) return points[0].y;
-  for (let i = 1; i < points.length; i++) {
-    if (year <= points[i].year) {
-      const prev = points[i - 1];
-      const curr = points[i];
-      const t = (year - prev.year) / Math.max(0.001, curr.year - prev.year);
-      return prev.y + (curr.y - prev.y) * t;
-    }
-  }
-  return points[points.length - 1].y;
-}
 
 export function TimelineCanvas(props: TimelineCanvasProps) {
   const { project, layout, rootId, curvature, spacing, rootCentric, onSelectPerson } = props;
   const lineThickness = 4;
-  const svgRef = useRef<SVGSVGElement | null>(null);
-  const [viewport, setViewport] = useState({ scale: 1, translateX: 0, translateY: 0 });
-  const [dragState, setDragState] = useState<{
-    pointerX: number;
-    pointerY: number;
-    translateX: number;
-    translateY: number;
-  } | null>(null);
 
   const width = 1080;
   const laneHeight = spacing;
@@ -315,6 +124,7 @@ export function TimelineCanvas(props: TimelineCanvasProps) {
   const centerOffset = topPadding;
   const height = topPadding + bottomPadding + totalSpan;
   const innerWidth = width - leftPadding - rightPadding;
+  const { svgRef, viewport, handleWheel, handlePointerDown, handlePointerMove, clearDragState } = useSvgViewport(width, height);
 
   const yearToX = (year: number) =>
     leftPadding + ((year - layout.range.startYear) / Math.max(1, layout.range.endYear - layout.range.startYear)) * innerWidth;
@@ -356,66 +166,11 @@ export function TimelineCanvas(props: TimelineCanvasProps) {
 
     return new Map(
       layout.people.map((entry) => {
-        const points = buildLifelinePoints(entry, project, laneByPersonId, laneToY, curvature, marriageYMap);
+        const points = buildLifelinePoints(entry, project, laneToY, curvature, marriageYMap);
         return [entry.person.id, { points, path: buildPath(points, yearToX) } satisfies PersonGeometry];
       }),
     );
   }, [innerWidth, layout.people, layout.range.endYear, layout.range.startYear, leftPadding, project, curvature, spacing, rootCentric, rootId, rootLaneIdx]);
-
-  const toSvgPoint = (clientX: number, clientY: number) => {
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (!rect) {
-      return { x: 0, y: 0 };
-    }
-
-    return {
-      x: ((clientX - rect.left) / rect.width) * width,
-      y: ((clientY - rect.top) / rect.height) * height,
-    };
-  };
-
-  const handleWheel: WheelEventHandler<SVGSVGElement> = (event) => {
-    event.preventDefault();
-    const svgPoint = toSvgPoint(event.clientX, event.clientY);
-    const factor = event.deltaY > 0 ? 0.9 : 1.1;
-    const nextScale = clamp(viewport.scale * factor, 0.65, 4);
-    if (nextScale === viewport.scale) {
-      return;
-    }
-
-    const contentX = (svgPoint.x - viewport.translateX) / viewport.scale;
-    const contentY = (svgPoint.y - viewport.translateY) / viewport.scale;
-
-    setViewport({
-      scale: nextScale,
-      translateX: svgPoint.x - contentX * nextScale,
-      translateY: svgPoint.y - contentY * nextScale,
-    });
-  };
-
-  const handlePointerDown: PointerEventHandler<SVGSVGElement> = (event) => {
-    const point = toSvgPoint(event.clientX, event.clientY);
-    setDragState({
-      pointerX: point.x,
-      pointerY: point.y,
-      translateX: viewport.translateX,
-      translateY: viewport.translateY,
-    });
-  };
-
-  const handlePointerMove: PointerEventHandler<SVGSVGElement> = (event) => {
-    if (!dragState) {
-      return;
-    }
-
-    const point = toSvgPoint(event.clientX, event.clientY);
-    setViewport((current) => ({
-      ...current,
-      translateX: dragState.translateX + (point.x - dragState.pointerX),
-      translateY: dragState.translateY + (point.y - dragState.pointerY),
-    }));
-  };
-
 
 
   return (
@@ -434,8 +189,8 @@ export function TimelineCanvas(props: TimelineCanvasProps) {
         onWheel={handleWheel}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
-        onPointerUp={() => setDragState(null)}
-        onPointerLeave={() => setDragState(null)}
+        onPointerUp={clearDragState}
+        onPointerLeave={clearDragState}
       >
         <defs>
           {layout.people.map((entry) => {

@@ -1,51 +1,59 @@
 import { describe, expect, it } from 'vitest';
-import { demoProject } from '../data/demoProject';
+import { edithFinchDemo } from '../data/demoProject';
 import { createTimelineLayout } from './layout';
 
 describe('createTimelineLayout', () => {
   it('includes both ancestors and descendants in hourglass mode', () => {
     const layout = createTimelineLayout({
-      project: demoProject,
-      rootId: 'p6',
+      project: edithFinchDemo,
+      rootId: 'edith',
       mode: 'hourglass',
-      focusId: 'p6',
-      doiRadius: 2,
+      focusId: 'edith',
     });
 
     const ids = new Set(layout.people.map((entry) => entry.person.id));
-    expect(ids.has('p1')).toBe(true);
-    expect(ids.has('p8')).toBe(true);
-    expect(ids.has('p7')).toBe(true);
+    expect(ids.has('odin')).toBe(true);
+    expect(ids.has('dawn')).toBe(true);
+    expect(ids.has('christopher')).toBe(true);
   });
 
   it('places ancestors above the root and descendants below it', () => {
     const layout = createTimelineLayout({
-      project: demoProject,
-      rootId: 'p6',
+      project: edithFinchDemo,
+      rootId: 'edith',
       mode: 'hourglass',
-      focusId: 'p6',
-      doiRadius: 2,
+      focusId: 'edith',
     });
 
     const laneById = new Map(layout.people.map((entry) => [entry.person.id, entry.lane]));
-    expect((laneById.get('p4') ?? 0) < (laneById.get('p6') ?? 0)).toBe(true);
-    expect((laneById.get('p3') ?? 0) < (laneById.get('p6') ?? 0)).toBe(true);
-    expect((laneById.get('p7') ?? 0) > (laneById.get('p6') ?? 0)).toBe(true);
-    expect((laneById.get('p8') ?? 0) > (laneById.get('p7') ?? 0)).toBe(true);
+    expect((laneById.get('dawn') ?? 0) < (laneById.get('edith') ?? 0)).toBe(true);
+    expect((laneById.get('sanjay') ?? 0) < (laneById.get('edith') ?? 0)).toBe(true);
+    expect((laneById.get('christopher') ?? 0) > (laneById.get('edith') ?? 0)).toBe(true);
   });
 
-  it('limits pedigree mode to the ancestral side and spouses', () => {
+  it('includes all people regardless of mode', () => {
     const layout = createTimelineLayout({
-      project: demoProject,
-      rootId: 'p6',
+      project: edithFinchDemo,
+      rootId: 'edith',
       mode: 'pedigree',
-      focusId: 'p6',
-      doiRadius: 2,
+      focusId: 'edith',
     });
 
     const ids = new Set(layout.people.map((entry) => entry.person.id));
-    expect(ids.has('p8')).toBe(false);
-    expect(ids.has('p4')).toBe(true);
-    expect(ids.has('p7')).toBe(true);
+    expect(ids.has('christopher')).toBe(true);
+    expect(ids.has('dawn')).toBe(true);
+    expect(ids.has('sanjay')).toBe(true);
+  });
+
+  it('applies custom order only to included people', () => {
+    const layout = createTimelineLayout({
+      project: edithFinchDemo,
+      rootId: 'edith',
+      mode: 'pedigree',
+      focusId: 'edith',
+      customOrder: ['christopher', 'edith', 'dawn', 'sanjay'],
+    });
+
+    expect(layout.people.map((entry) => entry.person.id)).toEqual(['christopher', 'edith', 'dawn', 'sanjay']);
   });
 });

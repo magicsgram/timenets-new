@@ -1,6 +1,10 @@
 import { useState, type ChangeEvent } from 'react';
 import type { Person, ProjectData } from '../types/domain';
-import { demoEntries, type DemoEntry } from '../data/demoProject';
+import type { DemoEntry } from '../data/demoProject';
+import { DemoModal } from './toolbar/DemoModal';
+import { ReorderList } from './toolbar/ReorderList';
+import { RootSelector } from './toolbar/RootSelector';
+import { ViewControls } from './toolbar/ViewControls';
 
 interface ToolbarProps {
   project: ProjectData;
@@ -60,92 +64,24 @@ export function Toolbar(props: ToolbarProps) {
       </div>
 
       <div className="toolbar-controls">
-        <div className="slider-group">
-        <label>
-          Horizontal zoom: {visibleSpan}y
-          <input
-            type="range"
-            min={1}
-            max={300}
-            step={1}
-            value={visibleSpan}
-            onChange={(event) => onVisibleSpanChange(Number(event.target.value))}
-          />
-        </label>
+        <ViewControls
+          visibleSpan={visibleSpan}
+          curvature={curvature}
+          spacing={spacing}
+          onVisibleSpanChange={onVisibleSpanChange}
+          onCurvatureChange={onCurvatureChange}
+          onSpacingChange={onSpacingChange}
+        />
 
-        <label>
-          Curvature: {curvature}y
-          <input
-            type="range"
-            min={0.5}
-            max={3}
-            step={0.5}
-            value={curvature}
-            onChange={(event) => onCurvatureChange(Number(event.target.value))}
-          />
-        </label>
+        <RootSelector
+          project={project}
+          rootId={rootId}
+          rootCentric={rootCentric}
+          onRootChange={onRootChange}
+          onRootCentricChange={onRootCentricChange}
+        />
 
-        <label>
-          Spacing: {spacing}px
-          <input
-            type="range"
-            min={20}
-            max={60}
-            step={4}
-            value={spacing}
-            onChange={(event) => onSpacingChange(Number(event.target.value))}
-          />
-        </label>
-        </div>
-
-        <label>
-          Root
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', marginLeft: '0.5rem', fontSize: '0.75rem', fontWeight: 'normal' }}>
-            <input type="checkbox" checked={rootCentric} onChange={(e) => onRootCentricChange(e.target.checked)} style={{ margin: 0 }} />
-            centric
-          </span>
-          <select value={rootId} onChange={(event) => onRootChange(event.target.value)}>
-            {project.people.map((person) => (
-              <option key={person.id} value={person.id}>
-                {person.firstName} {person.lastName}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <div className="reorder-section">
-          <div className="reorder-header">
-            <span className="reorder-title">Lane order</span>
-            <button type="button" className="reorder-reset" onClick={onResetOrder}>Auto</button>
-          </div>
-          <ol className="reorder-list">
-            {orderedPeople.map((person, idx) => {
-              const moveUp = () => {
-                if (idx === 0) return;
-                const ids = orderedPeople.map((p) => p.id);
-                [ids[idx - 1], ids[idx]] = [ids[idx], ids[idx - 1]];
-                onReorder(ids);
-              };
-
-              const moveDown = () => {
-                if (idx === orderedPeople.length - 1) return;
-                const ids = orderedPeople.map((p) => p.id);
-                [ids[idx + 1], ids[idx]] = [ids[idx], ids[idx + 1]];
-                onReorder(ids);
-              };
-
-              return (
-                <li key={person.id} className="reorder-item">
-                  <span className="reorder-name">{person.firstName} {person.lastName}</span>
-                  <span className="reorder-buttons">
-                    <button type="button" disabled={idx === 0} onClick={moveUp} aria-label="Move up">&#x25B2;</button>
-                    <button type="button" disabled={idx === orderedPeople.length - 1} onClick={moveDown} aria-label="Move down">&#x25BC;</button>
-                  </span>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
+        <ReorderList orderedPeople={orderedPeople} onReorder={onReorder} onResetOrder={onResetOrder} />
 
         <div className="toolbar-actions">
           <label className="button-like">
@@ -160,30 +96,7 @@ export function Toolbar(props: ToolbarProps) {
           </button>
         </div>
 
-        {showDemoModal && (
-          <div className="demo-modal-overlay" onClick={() => setShowDemoModal(false)}>
-            <div className="demo-modal" onClick={(e) => e.stopPropagation()}>
-              <h3>Example Datasets</h3>
-              <ul className="demo-list">
-                {demoEntries.map((demo) => (
-                  <li key={demo.id}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onLoadDemo(demo);
-                        setShowDemoModal(false);
-                      }}
-                    >
-                      <strong>{demo.name}</strong>
-                      <span>{demo.description}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <button type="button" className="demo-modal-close" onClick={() => setShowDemoModal(false)}>Close</button>
-            </div>
-          </div>
-        )}
+        {showDemoModal && <DemoModal onClose={() => setShowDemoModal(false)} onLoadDemo={onLoadDemo} />}
       </div>
     </aside>
   );
