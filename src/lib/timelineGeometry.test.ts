@@ -7,9 +7,9 @@ const sampleProject: ProjectData = {
   meta: { id: 'timeline-geometry', name: 'Timeline Geometry', description: '' },
   rootPersonId: 'p1',
   people: [
-    { id: 'p1', firstName: 'Alex', lastName: 'Gray', sex: 'M', birth: { value: '1980' } },
-    { id: 'p2', firstName: 'Blair', lastName: 'Gray', sex: 'F', birth: { value: '1982' } },
-    { id: 'p3', firstName: 'Casey', lastName: 'Hart', sex: 'F', birth: { value: '1984' } },
+    { id: 'p1', name: 'Alex Gray', sex: 'M', birth: { value: '1980' } },
+    { id: 'p2', name: 'Blair Gray', sex: 'F', birth: { value: '1982' } },
+    { id: 'p3', name: 'Casey Hart', sex: 'F', birth: { value: '1984' } },
   ],
   marriages: [
     { id: 'm1', person1Id: 'p1', person2Id: 'p2', start: { value: '2000' } },
