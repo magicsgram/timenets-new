@@ -10,6 +10,7 @@ interface TimelineCanvasProps {
   layout: TimelineLayout;
   selectedPersonId: string;
   rootId: string;
+  theme?: 'dark' | 'light';
   curvature: number;
   spacing: number;
   rootCentric: boolean;
@@ -22,7 +23,7 @@ const uncertaintyYears = 3;
 const labelColor = '#2e3436';
 
 export function TimelineCanvas(props: TimelineCanvasProps) {
-  const { project, layout, rootId, curvature, spacing, rootCentric, onSelectPerson } = props;
+  const { project, layout, rootId, theme = 'dark', curvature, spacing, rootCentric, onSelectPerson } = props;
   const lineThickness = 4;
 
   const width = 1080;
@@ -212,7 +213,7 @@ export function TimelineCanvas(props: TimelineCanvasProps) {
 
         </defs>
 
-        <rect x="0" y="0" width={width} height={height} fill="#050607" rx="18" />
+        <rect x="0" y="0" width={width} height={height} fill={theme === 'light' ? '#f5f7f9' : '#050607'} rx="18" />
         <g ref={translateGroupRef}>
           <g ref={scaleGroupRef}>
           <line x1={leftPadding} x2={width - rightPadding} y1={height - 24} y2={height - 24} className="baseline" />

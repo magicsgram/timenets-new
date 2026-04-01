@@ -251,8 +251,14 @@ textarea {
 }
 
 .toolbar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toolbar-action-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
 }
 
@@ -490,4 +496,77 @@ textarea {
     height: auto;
     max-height: 34vh;
   }
+}/* --- LIGHT THEME OVERRIDES --- */
+.app-shell[data-theme='light'] {
+  color: #2e3436;
+  background: #f5f7f9;
+  color-scheme: light;
+  --panel: rgba(255, 255, 255, 0.92);
+  --panel-strong: rgba(255, 255, 255, 0.98);
+  --panel-outline: rgba(0, 0, 0, 0.1);
+  --accent: #d27900;
+  --accent-soft: rgba(210, 121, 0, 0.14);
+  --text-muted: #64748b;
+  --grid: rgba(0, 0, 0, 0.12);
+}
+
+.app-shell[data-theme='light'] .year-label {
+  fill: rgba(46, 52, 54, 0.58);
+}
+
+.app-shell[data-theme='light'] .baseline {
+  stroke: rgba(0, 0, 0, 0.22);
+}
+
+.app-shell[data-theme='light'] .person-label {
+  fill: #2e3436;
+}
+
+.app-shell[data-theme='light'] .person-label.is-selected {
+  fill: #b06500;
+}
+
+.app-shell[data-theme='light'] .generation-label {
+  fill: rgba(0, 0, 0, 0.38);
+}
+
+.app-shell[data-theme='light'] .person-path-core.is-selected {
+  filter: drop-shadow(0 0 8px rgba(241, 178, 82, 0.7));
+}
+
+.app-shell[data-theme='light'] .button-like,
+.app-shell[data-theme='light'] button {
+  color: #2e3436;
+  background: linear-gradient(180deg, rgba(210, 121, 0, 0.1), rgba(210, 121, 0, 0.05));
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+.app-shell[data-theme='light'] input,
+.app-shell[data-theme='light'] select,
+.app-shell[data-theme='light'] textarea {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.2);
+  color: #2e3436;
+}
+
+.app-shell[data-theme='light'] .aurora {
+  opacity: 0.15;
+}
+
+.app-shell[data-theme='light'] select option {
+  background: #ffffff;
+  color: #2e3436;
+}
+
+.app-shell[data-theme='light'] .toolbar {
+  background: var(--panel);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.app-shell[data-theme='light'] .timenets-canvas-card {
+  background: var(--panel);
+}
+
+.app-shell[data-theme='light'] .canvas-card {
+  background: var(--panel);
 }

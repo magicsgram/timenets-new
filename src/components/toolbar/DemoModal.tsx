@@ -4,7 +4,7 @@ import type { ProjectData } from '../../types/domain';
 
 interface DemoModalProps {
   onClose: () => void;
-  onLoadDemo: (project: ProjectData) => void;
+  onLoadDemo: (project: ProjectData, demoId: string) => void;
 }
 
 export function DemoModal(props: DemoModalProps) {
@@ -33,7 +33,7 @@ export function DemoModal(props: DemoModalProps) {
                   type="button"
                   onClick={async () => {
                     const project = await fetchDemoProject(demo);
-                    onLoadDemo(project);
+                    onLoadDemo(project, demo.id);
                     onClose();
                   }}
                 >

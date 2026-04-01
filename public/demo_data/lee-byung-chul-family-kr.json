@@ -24,8 +24,7 @@
       "name": "박두을(삼성가 선대 안주인)",
       "sex": "F",
       "birth": {
-        "value": "1907",
-        "uncertain": true
+        "value": "1907-11-08"
       },
       "death": {
         "value": "2000-01-03"
@@ -37,10 +36,10 @@
       "name": "이인희(한솔그룹 고문)",
       "sex": "F",
       "birth": {
-        "value": "1929"
+        "value": "1929-01-30"
       },
       "death": {
-        "value": "2019"
+        "value": "2019-01-30"
       },
       "deceased": true,
       "fatherId": "이병철",
@@ -51,9 +50,12 @@
       "name": "조운해(한솔가 사위)",
       "sex": "M",
       "birth": {
-        "value": "1926",
-        "uncertain": true
-      }
+        "value": "1925-08-05"
+      },
+      "death": {
+        "value": "2019-03-01"
+      },
+      "deceased": true
     },
     {
       "id": "조동혁",
@@ -115,10 +117,10 @@
       "name": "이맹희(CJ그룹 명예회장)",
       "sex": "M",
       "birth": {
-        "value": "1931"
+        "value": "1931-06-20"
       },
       "death": {
-        "value": "2015"
+        "value": "2015-08-14"
       },
       "deceased": true,
       "fatherId": "이병철",
@@ -129,13 +131,16 @@
       "name": "손복남(이맹희 부인)",
       "sex": "F",
       "birth": {
-        "value": "1932",
-        "uncertain": true
-      }
+        "value": "1933-12-28"
+      },
+      "death": {
+        "value": "2022-11-05"
+      },
+      "deceased": true
     },
     {
-      "id": "미이경",
-      "name": "미이경(CJ문화재단 이사장)",
+      "id": "이미경",
+      "name": "이미경(CJ ENM 부회장)",
       "sex": "F",
       "fatherId": "이맹희",
       "motherId": "손복남",
@@ -213,10 +218,10 @@
       "name": "이창희(새한그룹 창업주)",
       "sex": "M",
       "birth": {
-        "value": "1933"
+        "value": "1933-05-24"
       },
       "death": {
-        "value": "1991"
+        "value": "1991-07-19"
       },
       "deceased": true,
       "fatherId": "이병철",
@@ -278,9 +283,13 @@
       "name": "구자학(아워홈 회장)",
       "sex": "M",
       "birth": {
-        "value": "1930"
+        "value": "1930-07-15"
       },
-      "fatherId": "구자경"
+      "fatherId": "구자경",
+      "death": {
+        "value": "2022-05-12"
+      },
+      "deceased": true
     },
     {
       "id": "구본성",
@@ -367,7 +376,7 @@
       "name": "홍라희(리움 명예관장)",
       "sex": "F",
       "birth": {
-        "value": "1945"
+        "value": "1945-07-15"
       },
       "fatherId": "홍진기",
       "motherId": "이인"
@@ -385,6 +394,135 @@
       "deceased": true,
       "fatherId": "이건희",
       "motherId": "홍라희"
+    },
+    {
+      "id": "이재용",
+      "name": "이재용(삼성전자 회장)",
+      "sex": "M",
+      "birth": {
+        "value": "1968-06-23"
+      },
+      "fatherId": "이건희",
+      "motherId": "홍라희"
+    },
+    {
+      "id": "임세령",
+      "name": "임세령(대상그룹 부회장)",
+      "sex": "F",
+      "birth": {
+        "value": "1977-08-13"
+      }
+    },
+    {
+      "id": "이지호",
+      "name": "이지호(삼성가 4세)",
+      "sex": "M",
+      "fatherId": "이재용",
+      "motherId": "임세령",
+      "birth": {
+        "value": "2000-12-14"
+      },
+      "uncertain": false
+    },
+    {
+      "id": "이원주",
+      "name": "이원주(삼성가 4세)",
+      "sex": "F",
+      "fatherId": "이재용",
+      "motherId": "임세령",
+      "birth": {
+        "value": "2004-03-27"
+      },
+      "uncertain": false
+    },
+    {
+      "id": "이부진",
+      "name": "이부진(호텔신라 사장)",
+      "sex": "F",
+      "birth": {
+        "value": "1970-10-06"
+      },
+      "fatherId": "이건희",
+      "motherId": "홍라희"
+    },
+    {
+      "id": "임우재",
+      "name": "임우재(이부진 전 남편)",
+      "sex": "M",
+      "notes": "사용자 제공 표기를 유지했다.",
+      "birth": {
+        "value": "1968",
+        "uncertain": true
+      }
+    },
+    {
+      "id": "임동현(아들)",
+      "name": "임동현(이부진 아들)",
+      "sex": "M",
+      "fatherId": "임우재",
+      "motherId": "이부진",
+      "birth": {
+        "value": "2007-08"
+      }
+    },
+    {
+      "id": "이서현",
+      "name": "이서현(삼성물산 사장)",
+      "sex": "F",
+      "birth": {
+        "value": "1973-09-20"
+      },
+      "fatherId": "이건희",
+      "motherId": "홍라희"
+    },
+    {
+      "id": "김재열",
+      "name": "김재열(삼성글로벌리서치 사장)",
+      "sex": "M",
+      "birth": {
+        "value": "1970",
+        "uncertain": true
+      }
+    },
+    {
+      "id": "김지이",
+      "name": "김지이(삼성가 4세)",
+      "sex": "F",
+      "fatherId": "김재열",
+      "motherId": "이서현",
+      "birth": {
+        "value": "2001"
+      }
+    },
+    {
+      "id": "김지수",
+      "name": "김지수(삼성가 4세)",
+      "sex": "F",
+      "fatherId": "김재열",
+      "motherId": "이서현",
+      "birth": {
+        "value": "2003"
+      }
+    },
+    {
+      "id": "김지후",
+      "name": "김지후(삼성가 4세)",
+      "sex": "F",
+      "fatherId": "김재열",
+      "motherId": "이서현",
+      "birth": {
+        "value": "2006"
+      }
+    },
+    {
+      "id": "김성준",
+      "name": "김성준(삼성가 4세)",
+      "sex": "M",
+      "fatherId": "김재열",
+      "motherId": "이서현",
+      "birth": {
+        "value": "2001"
+      }
     },
     {
       "id": "홍진기",
@@ -472,134 +610,11 @@
       }
     },
     {
-      "id": "이재용",
-      "name": "이재용(삼성전자 회장)",
-      "sex": "M",
-      "birth": {
-        "value": "1968-06-23"
-      },
-      "fatherId": "이건희",
-      "motherId": "홍라희"
-    },
-    {
-      "id": "임세령",
-      "name": "임세령(대상그룹 부회장)",
-      "sex": "F",
-      "birth": {
-        "value": "1977"
-      }
-    },
-    {
-      "id": "이지호",
-      "name": "이지호(삼성가 4세)",
-      "sex": "M",
-      "fatherId": "이재용",
-      "motherId": "임세령",
-      "birth": {
-        "value": "1999",
-        "uncertain": true
-      }
-    },
-    {
-      "id": "이원주",
-      "name": "이원주(삼성가 4세)",
-      "sex": "F",
-      "fatherId": "이재용",
-      "motherId": "임세령",
-      "birth": {
-        "value": "2004",
-        "uncertain": true
-      }
-    },
-    {
-      "id": "이부진",
-      "name": "이부진(호텔신라 사장)",
-      "sex": "F",
-      "birth": {
-        "value": "1970"
-      },
-      "fatherId": "이건희",
-      "motherId": "홍라희"
-    },
-    {
-      "id": "임동현",
-      "name": "임동현(범삼성가 인물)",
-      "sex": "M",
-      "notes": "사용자 제공 표기를 유지했다.",
-      "birth": {
-        "value": "1968",
-        "uncertain": true
-      }
-    },
-    {
-      "id": "이서현",
-      "name": "이서현(삼성물산 사장)",
-      "sex": "F",
-      "birth": {
-        "value": "1973"
-      },
-      "fatherId": "이건희",
-      "motherId": "홍라희"
-    },
-    {
-      "id": "김재열",
-      "name": "김재열(이서현 전 남편)",
-      "sex": "M",
-      "birth": {
-        "value": "1970",
-        "uncertain": true
-      }
-    },
-    {
-      "id": "김지이",
-      "name": "김지이(삼성가 4세)",
-      "sex": "F",
-      "fatherId": "김재열",
-      "motherId": "이서현",
-      "birth": {
-        "value": "2003",
-        "uncertain": true
-      }
-    },
-    {
-      "id": "김지수",
-      "name": "김지수(삼성가 4세)",
-      "sex": "F",
-      "fatherId": "김재열",
-      "motherId": "이서현",
-      "birth": {
-        "value": "2005",
-        "uncertain": true
-      }
-    },
-    {
-      "id": "김지후",
-      "name": "김지후(삼성가 4세)",
-      "sex": "F",
-      "fatherId": "김재열",
-      "motherId": "이서현",
-      "birth": {
-        "value": "2007",
-        "uncertain": true
-      }
-    },
-    {
-      "id": "김성준",
-      "name": "김성준(삼성가 4세)",
-      "sex": "M",
-      "fatherId": "김재열",
-      "motherId": "이서현",
-      "birth": {
-        "value": "2000",
-        "uncertain": true
-      }
-    },
-    {
       "id": "이명희",
       "name": "이명희(신세계그룹 총괄회장)",
       "sex": "F",
       "birth": {
-        "value": "1943"
+        "value": "1943-09-05"
       },
       "fatherId": "이병철",
       "motherId": "박두을"
@@ -609,8 +624,7 @@
       "name": "정재은(신세계 명예회장)",
       "sex": "M",
       "birth": {
-        "value": "1934",
-        "uncertain": true
+        "value": "1939-03-15"
       }
     },
     {
@@ -626,7 +640,7 @@
       "name": "정용진(신세계그룹 회장)",
       "sex": "M",
       "birth": {
-        "value": "1968"
+        "value": "1968-09-19"
       },
       "fatherId": "정재은",
       "motherId": "이명희"
@@ -640,29 +654,68 @@
       }
     },
     {
+      "id": "정해찬",
+      "name": "정해찬",
+      "sex": "M",
+      "fatherId": "정용진",
+      "motherId": "고현정",
+      "birth": {
+        "value": "1998"
+      }
+    },
+    {
+      "id": "정해인",
+      "name": "정해인",
+      "sex": "F",
+      "fatherId": "정용진",
+      "motherId": "고현정",
+      "birth": {
+        "value": "2000"
+      }
+    },
+    {
+      "id": "정해윤",
+      "name": "정해윤",
+      "sex": "F",
+      "fatherId": "정용진",
+      "motherId": "한지희",
+      "birth": {
+        "value": "2013"
+      }
+    },
+    {
+      "id": "정해진",
+      "name": "정해진",
+      "sex": "M",
+      "fatherId": "정용진",
+      "motherId": "한지희",
+      "birth": {
+        "value": "2013"
+      }
+    },
+    {
       "id": "정유경",
       "name": "정유경(신세계 회장)",
       "sex": "F",
       "birth": {
-        "value": "1972"
+        "value": "1972-10-05"
       },
       "fatherId": "정재은",
       "motherId": "이명희"
     },
     {
-      "id": "문정환",
-      "name": "문정환(정유경 남편)",
+      "id": "문성욱",
+      "name": "문성욱(신세계인터내셔날 부사장)",
       "sex": "M",
       "birth": {
-        "value": "1970",
-        "uncertain": true
+        "value": "1972"
       }
     },
     {
       "id": "문서윤",
       "name": "문서윤(신세계가 3세)",
       "sex": "F",
-      "fatherId": "문정환",
+      "fatherId": "문성욱",
       "motherId": "정유경",
       "birth": {
         "value": "2000",
@@ -673,7 +726,7 @@
       "id": "문서진",
       "name": "문서진(신세계가 3세)",
       "sex": "U",
-      "fatherId": "문정환",
+      "fatherId": "문성욱",
       "motherId": "정유경",
       "birth": {
         "value": "2002",
@@ -685,9 +738,12 @@
       "name": "허을수(구인회 부인)",
       "sex": "F",
       "birth": {
-        "value": "1910",
-        "uncertain": true
-      }
+        "value": "1905"
+      },
+      "death": {
+        "value": "1986-06-13"
+      },
+      "deceased": true
     },
     {
       "id": "구인회",
@@ -842,9 +898,9 @@
       "divorced": true
     },
     {
-      "id": "m-이부진-임동현",
+      "id": "m-이부진-임우재",
       "person1Id": "이부진",
-      "person2Id": "임동현",
+      "person2Id": "임우재",
       "start": {
         "value": "1999"
       },
@@ -884,17 +940,13 @@
       "person1Id": "이서현",
       "person2Id": "김재열",
       "start": {
-        "value": "1999"
-      },
-      "end": {
-        "value": "2014"
-      },
-      "divorced": true
+        "value": "2000"
+      }
     },
     {
-      "id": "m-정유경-문정환",
+      "id": "m-정유경-문성욱",
       "person1Id": "정유경",
-      "person2Id": "문정환",
+      "person2Id": "문성욱",
       "start": {
         "value": "1997",
         "uncertain": true
@@ -935,7 +987,8 @@
       "end": {
         "value": "2003"
       },
-      "id": "m-정용진-고현정"
+      "id": "m-정용진-고현정",
+      "divorced": true
     }
   ],
   "events": []

@@ -1,7 +1,7 @@
-import { startTransition, useDeferredValue, useMemo, useState } from 'react';
+import { useEffect, startTransition, useDeferredValue, useMemo, useState } from 'react';
 import { TimelineCanvas } from './components/TimelineCanvas';
 import { Toolbar } from './components/Toolbar';
-import { emptyProject } from './data/demoProject';
+import { emptyProject, fetchDemoEntries, fetchDemoProject } from './data/demoProject';
 import { useProjectPersistence } from './hooks/useProjectPersistence';
 import { useViewSettings } from './hooks/useViewSettings';
 import { createTimelineLayout } from './lib/layout';
@@ -16,6 +16,7 @@ export default function App() {
   const [project, setProject] = useState<ProjectData>(emptyProject);
   const [rootId, setRootId] = useState(project.rootPersonId);
   const [selectedPersonId, setSelectedPersonId] = useState(project.rootPersonId);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [range, setRange] = useState<VisibleRange | null>(null);
   const {
     curvature,
@@ -34,6 +35,37 @@ export default function App() {
   const deferredProject = useDeferredValue(project);
 
   useProjectPersistence(project, storageKey);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const themeParam = params.get('theme');
+    if (themeParam === 'dark' || themeParam === 'light') {
+      setTheme(themeParam as 'dark' | 'light');
+    }
+
+    const demoParam = params.get('demo');
+    if (demoParam) {
+      fetchDemoEntries().then((entries) => {
+        const demo = entries.find((e) => e.id === demoParam);
+        if (demo) {
+          fetchDemoProject(demo).then((proj) => {
+            setProjectAndSync(proj, `Loaded ${proj.meta.name}.`);
+          });
+        } else {
+          setProjectAndSync(emptyProject, 'Invalid demo.');
+        }
+      }).catch(() => {
+        setProjectAndSync(emptyProject, 'Error loading demos.');
+      });
+    }
+  }, []); // run only once on mount
+
+  const handleThemeChange = (newTheme: 'dark' | 'light') => {
+    setTheme(newTheme);
+    const url = new URL(window.location.href);
+    url.searchParams.set('theme', newTheme);
+    window.history.replaceState({}, '', url.toString());
+  };
 
   const layout = useMemo(() => {
     return createTimelineLayout({
@@ -93,7 +125,7 @@ export default function App() {
   };
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" data-theme={theme}>
       <div className="aurora aurora-left" />
       <div className="aurora aurora-right" />
 
@@ -104,6 +136,7 @@ export default function App() {
             layout={layout}
             selectedPersonId={selectedPersonId}
             rootId={rootId}
+            theme={theme}
             curvature={curvature}
             spacing={spacing}
             rootCentric={rootCentric}
@@ -115,6 +148,8 @@ export default function App() {
         <Toolbar
           project={project}
           rootId={rootId}
+          theme={theme}
+          onThemeChange={handleThemeChange}
           visibleSpan={layout.range.endYear - layout.range.startYear}
           curvature={curvature}
           spacing={spacing}
@@ -137,8 +172,56 @@ export default function App() {
             const settings: ViewSettings = { ...serializedViewSettings, rootId };
             downloadProject(project, settings);
             setStatus('Exported project JSON.');
+          }}          onExportSvg={() => {
+            const svgElement = document.querySelector('.timeline-canvas');
+            if (svgElement) {
+              const clone = svgElement.cloneNode(true) as SVGSVGElement;
+              const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+              const bg = theme === 'light' ? '#f5f7f9' : '#050607';
+              const textFill = theme === 'light' ? '#2e3436' : '#dfe6ee';
+              const gridStroke = theme === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.07)';
+              const yearLabel = theme === 'light' ? 'rgba(46, 52, 54, 0.58)' : 'rgba(237, 242, 247, 0.48)';
+              const baselineStroke = theme === 'light' ? 'rgba(0, 0, 0, 0.22)' : 'rgba(255, 255, 255, 0.12)';
+              
+              style.textContent = `
+                .year-grid { stroke: ${gridStroke}; stroke-width: 1; stroke-dasharray: 2 12; }
+                .year-label { fill: ${yearLabel}; font-size: 11px; text-anchor: middle; font-family: "Segoe UI", "Aptos", sans-serif; }
+                .baseline { stroke: ${baselineStroke}; stroke-width: 1; }
+                .person-label { fill: ${textFill}; font-size: 13px; letter-spacing: 0.01em; cursor: pointer; font-family: "Segoe UI", "Aptos", sans-serif; }
+                .person-label.is-selected { fill: ${theme === 'light' ? '#b06500' : '#fff3cd'}; }
+                .person-label.is-root { font-weight: 700; }
+                .generation-label { fill: ${theme === 'light' ? 'rgba(0, 0, 0, 0.38)' : 'rgba(255, 255, 255, 0.28)'}; font-size: 10px; font-family: "Segoe UI", "Aptos", sans-serif; }
+                .person-path-core { stroke-linejoin: round; }
+                .person-path-core.is-selected { filter: drop-shadow(0 0 8px ${theme === 'light' ? 'rgba(241, 178, 82, 0.7)' : 'rgba(241, 178, 82, 0.42)'}); }
+              `;
+              clone.style.backgroundColor = bg;
+              // Also update the <rect> background inside SVG if it exists
+              const bgRect = clone.querySelector('rect[fill="#050607"], rect[fill="#f5f7f9"]');
+              if (bgRect) {
+                 // @ts-ignore
+                 bgRect.setAttribute('fill', bg);
+              }
+              clone.insertBefore(style, clone.firstChild);
+              const serializer = new XMLSerializer();
+              const svgString = serializer.serializeToString(clone);
+              const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = `${project.meta.name.replace(/\s+/g, '-') || 'timenets'}-timeline.svg`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+              setStatus('Exported SVG.');
+            }
           }}
-          onLoadDemo={(project) => setProjectAndSync(project, `Loaded ${project.meta.name}.`)}
+          onLoadDemo={(project, demoId) => {
+            setProjectAndSync(project, `Loaded ${project.meta.name}.`);
+            const url = new URL(window.location.href);
+            url.searchParams.set('demo', demoId);
+            window.history.pushState({}, '', url.toString());
+          }}
         />
       </main>
     </div>

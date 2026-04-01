@@ -8,6 +8,8 @@ import { ViewControls } from './toolbar/ViewControls';
 interface ToolbarProps {
   project: ProjectData;
   rootId: string;
+  theme: 'dark' | 'light';
+  onThemeChange: (theme: 'dark' | 'light') => void;
   visibleSpan: number;
   curvature: number;
   spacing: number;
@@ -22,13 +24,16 @@ interface ToolbarProps {
   onResetOrder: () => void;
   onImportFile: (file: File) => void;
   onExport: () => void;
-  onLoadDemo: (project: ProjectData) => void;
+  onExportSvg: () => void;
+  onLoadDemo: (project: ProjectData, demoId: string) => void;
 }
 
 export function Toolbar(props: ToolbarProps) {
   const {
     project,
     rootId,
+    theme,
+    onThemeChange,
     visibleSpan,
     curvature,
     spacing,
@@ -43,6 +48,7 @@ export function Toolbar(props: ToolbarProps) {
     onResetOrder,
     onImportFile,
     onExport,
+    onExportSvg,
     onLoadDemo,
   } = props;
 
@@ -63,6 +69,24 @@ export function Toolbar(props: ToolbarProps) {
       </div>
 
       <div className="toolbar-controls">
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem' }}>
+            <input 
+              type="radio" 
+              name="theme" 
+              checked={theme === 'dark'} 
+              onChange={() => onThemeChange('dark')} 
+            /> Dark
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem' }}>
+            <input 
+              type="radio" 
+              name="theme" 
+              checked={theme === 'light'} 
+              onChange={() => onThemeChange('light')} 
+            /> Light
+          </label>
+        </div>
         <ViewControls
           visibleSpan={visibleSpan}
           curvature={curvature}
@@ -83,16 +107,23 @@ export function Toolbar(props: ToolbarProps) {
         <ReorderList orderedPeople={orderedPeople} onReorder={onReorder} onResetOrder={onResetOrder} />
 
         <div className="toolbar-actions">
-          <label className="button-like">
-            Load
-            <input type="file" accept="application/json,.json,.ged,.gedcom,text/plain" onChange={handleFileInput} hidden />
-          </label>
-          <button type="button" onClick={onExport}>
-            Save
-          </button>
-          <button type="button" onClick={() => setShowDemoModal(true)}>
-            Demo
-          </button>
+          <div className="toolbar-action-row">
+            <label className="button-like">
+              Load
+              <input type="file" accept="application/json,.json,.ged,.gedcom,text/plain" onChange={handleFileInput} hidden />
+            </label>
+            <button type="button" onClick={onExport}>
+              Save
+            </button>
+          </div>
+          <div className="toolbar-action-row">
+            <button type="button" onClick={onExportSvg}>
+              Export SVG
+            </button>
+            <button type="button" onClick={() => setShowDemoModal(true)}>
+              Demo
+            </button>
+          </div>
         </div>
 
         {showDemoModal && <DemoModal onClose={() => setShowDemoModal(false)} onLoadDemo={onLoadDemo} />}
