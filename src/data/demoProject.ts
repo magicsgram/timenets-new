@@ -17,11 +17,11 @@ export interface DemoEntry {
 }
 
 export async function fetchDemoEntries(): Promise<DemoEntry[]> {
-  const res = await fetch('/demo_data/index.json');
+  const res = await fetch(`${import.meta.env.BASE_URL}demo_data/index.json`);
   return res.json();
 }
 
 export async function fetchDemoProject(entry: DemoEntry): Promise<ProjectData> {
-  const res = await fetch(`/demo_data/${entry.file}`);
+  const res = await fetch(`${import.meta.env.BASE_URL}demo_data/${entry.file}`);
   return res.json();
 }
