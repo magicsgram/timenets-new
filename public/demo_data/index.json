@@ -1,0 +1,32 @@
+[
+  {
+    "id": "british-royal",
+    "name": "British Royal Family",
+    "description": "Charles, Diana, Camilla, William, and Harry.",
+    "file": "british-royal.json"
+  },
+  {
+    "id": "edith-finch",
+    "name": "What Remains of Edith Finch",
+    "description": "The Finch family tree from the game.",
+    "file": "edith-finch.json"
+  },
+  {
+    "id": "kim-family",
+    "name": "Kim Family (North Korea)",
+    "description": "The ruling Kim dynasty from Kim Il-sung to Kim Jong-un.",
+    "file": "kim-family.json"
+  },
+  {
+    "id": "kim-family-kr",
+    "name": "김씨 일가 (북한)",
+    "description": "김일성부터 김정은까지, 북한 김씨 왕조.",
+    "file": "kim-family-kr.json"
+  },
+  {
+    "id": "lee-byung-chul-family-kr",
+    "name": "이병철 일가(범삼성가)",
+    "description": "삼성, CJ, 한솔, 신세계, LG로 이어지는 범삼성가 가계도.",
+    "file": "lee-byung-chul-family-kr.json"
+  }
+]

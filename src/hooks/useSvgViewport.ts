@@ -1,4 +1,4 @@
-import { useRef, useState, type PointerEventHandler, type WheelEventHandler } from 'react';
+import { useRef, type PointerEventHandler, type WheelEventHandler } from 'react';
 import { clamp } from '../lib/dates';
 
 interface ViewportState {
@@ -8,42 +8,51 @@ interface ViewportState {
 }
 
 interface DragState {
+  pointerId: number;
   pointerX: number;
   pointerY: number;
   translateX: number;
   translateY: number;
 }
 
-export function useSvgViewport(width: number, height: number) {
+export function useSvgViewport() {
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const [viewport, setViewport] = useState<ViewportState>({ scale: 1, translateX: 0, translateY: 0 });
-  const [dragState, setDragState] = useState<DragState | null>(null);
+  const translateGroupRef = useRef<SVGGElement | null>(null);
+  const scaleGroupRef = useRef<SVGGElement | null>(null);
+  const viewportRef = useRef<ViewportState>({ scale: 1, translateX: 0, translateY: 0 });
+  const dragStateRef = useRef<DragState | null>(null);
+
+  const applyViewport = (nextViewport: ViewportState) => {
+    viewportRef.current = nextViewport;
+    translateGroupRef.current?.setAttribute('transform', `translate(${nextViewport.translateX} ${nextViewport.translateY})`);
+    scaleGroupRef.current?.setAttribute('transform', `scale(${nextViewport.scale})`);
+  };
 
   const toSvgPoint = (clientX: number, clientY: number) => {
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (!rect) {
+    const svgElement = svgRef.current;
+    const matrix = svgElement?.getScreenCTM();
+    if (!svgElement || !matrix) {
       return { x: 0, y: 0 };
     }
 
-    return {
-      x: ((clientX - rect.left) / rect.width) * width,
-      y: ((clientY - rect.top) / rect.height) * height,
-    };
+    const point = new DOMPoint(clientX, clientY).matrixTransform(matrix.inverse());
+    return { x: point.x, y: point.y };
   };
 
   const handleWheel: WheelEventHandler<SVGSVGElement> = (event) => {
     event.preventDefault();
     const svgPoint = toSvgPoint(event.clientX, event.clientY);
     const factor = event.deltaY > 0 ? 0.9 : 1.1;
-    const nextScale = clamp(viewport.scale * factor, 0.65, 4);
-    if (nextScale === viewport.scale) {
+    const currentViewport = viewportRef.current;
+    const nextScale = clamp(currentViewport.scale * factor, 0.65, 4);
+    if (nextScale === currentViewport.scale) {
       return;
     }
 
-    const contentX = (svgPoint.x - viewport.translateX) / viewport.scale;
-    const contentY = (svgPoint.y - viewport.translateY) / viewport.scale;
+    const contentX = (svgPoint.x - currentViewport.translateX) / currentViewport.scale;
+    const contentY = (svgPoint.y - currentViewport.translateY) / currentViewport.scale;
 
-    setViewport({
+    applyViewport({
       scale: nextScale,
       translateX: svgPoint.x - contentX * nextScale,
       translateY: svgPoint.y - contentY * nextScale,
@@ -51,34 +60,51 @@ export function useSvgViewport(width: number, height: number) {
   };
 
   const handlePointerDown: PointerEventHandler<SVGSVGElement> = (event) => {
+    event.currentTarget.setPointerCapture(event.pointerId);
     const point = toSvgPoint(event.clientX, event.clientY);
-    setDragState({
+    dragStateRef.current = {
+      pointerId: event.pointerId,
       pointerX: point.x,
       pointerY: point.y,
-      translateX: viewport.translateX,
-      translateY: viewport.translateY,
-    });
+      translateX: viewportRef.current.translateX,
+      translateY: viewportRef.current.translateY,
+    };
   };
 
   const handlePointerMove: PointerEventHandler<SVGSVGElement> = (event) => {
-    if (!dragState) {
+    const dragState = dragStateRef.current;
+    if (!dragState || dragState.pointerId !== event.pointerId) {
       return;
     }
 
     const point = toSvgPoint(event.clientX, event.clientY);
-    setViewport((current) => ({
-      ...current,
+    applyViewport({
+      ...viewportRef.current,
       translateX: dragState.translateX + (point.x - dragState.pointerX),
       translateY: dragState.translateY + (point.y - dragState.pointerY),
-    }));
+    });
+  };
+
+  const handlePointerUp: PointerEventHandler<SVGSVGElement> = (event) => {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    dragStateRef.current = null;
+  };
+
+  const clearDragState = () => {
+    dragStateRef.current = null;
   };
 
   return {
     svgRef,
-    viewport,
+    translateGroupRef,
+    scaleGroupRef,
     handleWheel,
     handlePointerDown,
     handlePointerMove,
-    clearDragState: () => setDragState(null),
+    handlePointerUp,
+    clearDragState,
   };
 }

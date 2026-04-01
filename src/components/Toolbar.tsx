@@ -1,6 +1,5 @@
 import { useState, type ChangeEvent } from 'react';
 import type { Person, ProjectData } from '../types/domain';
-import type { DemoEntry } from '../data/demoProject';
 import { DemoModal } from './toolbar/DemoModal';
 import { ReorderList } from './toolbar/ReorderList';
 import { RootSelector } from './toolbar/RootSelector';
@@ -23,7 +22,7 @@ interface ToolbarProps {
   onResetOrder: () => void;
   onImportFile: (file: File) => void;
   onExport: () => void;
-  onLoadDemo: (demo: DemoEntry) => void;
+  onLoadDemo: (project: ProjectData) => void;
 }
 
 export function Toolbar(props: ToolbarProps) {

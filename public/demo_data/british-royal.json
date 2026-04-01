@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "meta": {
+    "id": "royal-family-demo",
+    "name": "British Royal Family",
+    "description": "Charles, Diana, Camilla, William, and Harry."
+  },
+  "rootPersonId": "charles",
+  "people": [
+    {
+      "id": "andrew-pb",
+      "name": "Andrew Parker Bowles",
+      "sex": "M",
+      "birth": {
+        "value": "1939-12-27"
+      }
+    },
+    {
+      "id": "camilla-s",
+      "name": "Camilla Shand",
+      "sex": "F",
+      "birth": {
+        "value": "1947-07-17"
+      }
+    },
+    {
+      "id": "diana",
+      "name": "Diana Spencer",
+      "sex": "F",
+      "birth": {
+        "value": "1961-07-01"
+      },
+      "death": {
+        "value": "1997-08-31"
+      },
+      "deceased": true
+    },
+    {
+      "id": "charles",
+      "name": "Charles Windsor",
+      "sex": "M",
+      "birth": {
+        "value": "1948-11-14"
+      }
+    },
+    {
+      "id": "harry",
+      "name": "Harry Windsor",
+      "sex": "M",
+      "birth": {
+        "value": "1984-09-15"
+      },
+      "fatherId": "charles",
+      "motherId": "diana"
+    },
+    {
+      "id": "william",
+      "name": "William Windsor",
+      "sex": "M",
+      "birth": {
+        "value": "1982-06-21"
+      },
+      "fatherId": "charles",
+      "motherId": "diana"
+    }
+  ],
+  "marriages": [
+    {
+      "id": "m-charles-diana",
+      "person1Id": "charles",
+      "person2Id": "diana",
+      "start": {
+        "value": "1981-07-29"
+      },
+      "end": {
+        "value": "1996-08-28"
+      },
+      "divorced": true
+    },
+    {
+      "id": "m-charles-camilla",
+      "person1Id": "charles",
+      "person2Id": "camilla-s",
+      "start": {
+        "value": "2005-04-09"
+      }
+    },
+    {
+      "id": "m-andrew-camilla",
+      "person1Id": "andrew-pb",
+      "person2Id": "camilla-s",
+      "start": {
+        "value": "1973-07-04"
+      },
+      "end": {
+        "value": "1995-03-03"
+      },
+      "divorced": true
+    }
+  ],
+  "events": []
+}

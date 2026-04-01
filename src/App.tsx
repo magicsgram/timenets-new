@@ -138,7 +138,7 @@ export default function App() {
             downloadProject(project, settings);
             setStatus('Exported project JSON.');
           }}
-          onLoadDemo={(demo) => setProjectAndSync(demo.project, `Loaded ${demo.name}.`)}
+          onLoadDemo={(project) => setProjectAndSync(project, `Loaded ${project.meta.name}.`)}
         />
       </main>
     </div>

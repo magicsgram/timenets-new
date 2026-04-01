@@ -387,6 +387,14 @@ textarea {
   display: block;
   flex: 1 1 0;
   min-height: 0;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.timeline-canvas:active {
+  cursor: grabbing;
 }
 
 .year-grid {

@@ -1,0 +1,301 @@
+{
+  "version": 1,
+  "meta": {
+    "id": "edith-finch-demo",
+    "name": "What Remains of Edith Finch",
+    "description": "The Finch family from What Remains of Edith Finch."
+  },
+  "rootPersonId": "edith",
+  "people": [
+    {
+      "id": "odin",
+      "name": "Odin Finch",
+      "sex": "M",
+      "birth": {
+        "value": "1880"
+      },
+      "death": {
+        "value": "1937"
+      },
+      "deceased": true
+    },
+    {
+      "id": "ingeborg",
+      "name": "Ingeborg Finch",
+      "sex": "F",
+      "birth": {
+        "value": "1883"
+      },
+      "death": {
+        "value": "1937"
+      },
+      "deceased": true
+    },
+    {
+      "id": "johann",
+      "name": "Johann Finch",
+      "sex": "M",
+      "birth": {
+        "value": "1937"
+      },
+      "death": {
+        "value": "1937"
+      },
+      "deceased": true,
+      "fatherId": "odin",
+      "motherId": "ingeborg"
+    },
+    {
+      "id": "edie",
+      "name": "Edie Finch",
+      "sex": "F",
+      "birth": {
+        "value": "1917"
+      },
+      "death": {
+        "value": "2010"
+      },
+      "deceased": true,
+      "fatherId": "odin",
+      "motherId": "ingeborg"
+    },
+    {
+      "id": "sven",
+      "name": "Sven Finch",
+      "sex": "M",
+      "birth": {
+        "value": "1915"
+      },
+      "death": {
+        "value": "1964"
+      },
+      "deceased": true
+    },
+    {
+      "id": "molly",
+      "name": "Molly Finch",
+      "sex": "F",
+      "birth": {
+        "value": "1937"
+      },
+      "death": {
+        "value": "1947"
+      },
+      "deceased": true,
+      "fatherId": "sven",
+      "motherId": "edie"
+    },
+    {
+      "id": "barbara",
+      "name": "Barbara Finch",
+      "sex": "F",
+      "birth": {
+        "value": "1944"
+      },
+      "death": {
+        "value": "1960"
+      },
+      "deceased": true,
+      "fatherId": "sven",
+      "motherId": "edie"
+    },
+    {
+      "id": "calvin",
+      "name": "Calvin Finch",
+      "sex": "M",
+      "birth": {
+        "value": "1950"
+      },
+      "death": {
+        "value": "1961"
+      },
+      "deceased": true,
+      "fatherId": "sven",
+      "motherId": "edie"
+    },
+    {
+      "id": "walter",
+      "name": "Walter Finch",
+      "sex": "M",
+      "birth": {
+        "value": "1952"
+      },
+      "death": {
+        "value": "2005"
+      },
+      "deceased": true,
+      "fatherId": "sven",
+      "motherId": "edie"
+    },
+    {
+      "id": "sam",
+      "name": "Sam Finch",
+      "sex": "M",
+      "birth": {
+        "value": "1950"
+      },
+      "death": {
+        "value": "1983"
+      },
+      "deceased": true,
+      "fatherId": "sven",
+      "motherId": "edie"
+    },
+    {
+      "id": "kay",
+      "name": "Kay Carlyle",
+      "sex": "F",
+      "birth": {
+        "value": "1952"
+      }
+    },
+    {
+      "id": "gus",
+      "name": "Gus Finch",
+      "sex": "M",
+      "birth": {
+        "value": "1969"
+      },
+      "death": {
+        "value": "1982"
+      },
+      "deceased": true,
+      "fatherId": "sam",
+      "motherId": "kay"
+    },
+    {
+      "id": "gregory",
+      "name": "Gregory Finch",
+      "sex": "M",
+      "birth": {
+        "value": "1976"
+      },
+      "death": {
+        "value": "1977"
+      },
+      "deceased": true,
+      "fatherId": "sam",
+      "motherId": "kay"
+    },
+    {
+      "id": "dawn",
+      "name": "Dawn Finch",
+      "sex": "F",
+      "birth": {
+        "value": "1971"
+      },
+      "death": {
+        "value": "2016"
+      },
+      "deceased": true,
+      "fatherId": "sam",
+      "motherId": "kay"
+    },
+    {
+      "id": "sanjay",
+      "name": "Sanjay Kumar",
+      "sex": "M",
+      "birth": {
+        "value": "1970"
+      },
+      "death": {
+        "value": "2002"
+      },
+      "deceased": true
+    },
+    {
+      "id": "lewis",
+      "name": "Lewis Finch",
+      "sex": "M",
+      "birth": {
+        "value": "1988"
+      },
+      "death": {
+        "value": "2010"
+      },
+      "deceased": true,
+      "fatherId": "sanjay",
+      "motherId": "dawn"
+    },
+    {
+      "id": "milton",
+      "name": "Milton Finch",
+      "sex": "M",
+      "birth": {
+        "value": "1991"
+      },
+      "death": {
+        "value": "2003",
+        "uncertain": true
+      },
+      "deceased": true,
+      "fatherId": "sanjay",
+      "motherId": "dawn"
+    },
+    {
+      "id": "edith",
+      "name": "Edith Finch",
+      "sex": "F",
+      "birth": {
+        "value": "2000"
+      },
+      "death": {
+        "value": "2017"
+      },
+      "deceased": true,
+      "fatherId": "sanjay",
+      "motherId": "dawn"
+    },
+    {
+      "id": "christopher",
+      "name": "Christopher Finch",
+      "sex": "M",
+      "birth": {
+        "value": "2017"
+      },
+      "motherId": "edith"
+    }
+  ],
+  "marriages": [
+    {
+      "id": "m-odin-ingeborg",
+      "person1Id": "odin",
+      "person2Id": "ingeborg",
+      "start": {
+        "value": "1905"
+      }
+    },
+    {
+      "id": "m-sven-edie",
+      "person1Id": "sven",
+      "person2Id": "edie",
+      "start": {
+        "value": "1937"
+      }
+    },
+    {
+      "id": "m-sam-kay",
+      "person1Id": "sam",
+      "person2Id": "kay",
+      "start": {
+        "value": "1968"
+      },
+      "end": {
+        "value": "1977"
+      },
+      "divorced": true
+    },
+    {
+      "id": "m-dawn-sanjay",
+      "person1Id": "dawn",
+      "person2Id": "sanjay",
+      "start": {
+        "value": "1987"
+      },
+      "end": {
+        "value": "2002"
+      }
+    }
+  ],
+  "events": []
+}

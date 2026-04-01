@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { edithFinchDemo } from '../data/demoProject';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+import type { ProjectData } from '../types/domain';
 import { createTimelineLayout } from './layout';
+
+const edithFinchDemo: ProjectData = JSON.parse(
+  readFileSync(resolve(__dirname, '../../public/demo_data/edith-finch.json'), 'utf-8'),
+);
 
 describe('createTimelineLayout', () => {
   it('includes both ancestors and descendants in hourglass mode', () => {

@@ -1,0 +1,391 @@
+{
+  "version": 1,
+  "meta": {
+    "id": "kim-family-demo",
+    "name": "Kim Family (North Korea)",
+    "description": "The ruling Kim dynasty from Kim Il-sung to Kim Jong-un."
+  },
+  "rootPersonId": "kim-jong-il",
+  "people": [
+    {
+      "id": "kim-il-sung",
+      "name": "Kim Il-sung",
+      "sex": "M",
+      "birth": {
+        "value": "1912-04-15"
+      },
+      "death": {
+        "value": "1994-07-08"
+      },
+      "deceased": true
+    },
+    {
+      "id": "kim-jong-suk",
+      "name": "Kim Jong-suk",
+      "sex": "F",
+      "birth": {
+        "value": "1917-12-24"
+      },
+      "death": {
+        "value": "1949-09-22"
+      },
+      "deceased": true
+    },
+    {
+      "id": "kim-song-ae",
+      "name": "Kim Song-ae",
+      "sex": "F",
+      "birth": {
+        "value": "1924"
+      },
+      "death": {
+        "value": "2014"
+      },
+      "deceased": true
+    },
+    {
+      "id": "kim-man-il",
+      "name": "Kim Man-il",
+      "sex": "M",
+      "birth": {
+        "value": "1944"
+      },
+      "death": {
+        "value": "1947"
+      },
+      "deceased": true,
+      "fatherId": "kim-il-sung",
+      "motherId": "kim-jong-suk"
+    },
+    {
+      "id": "kim-kyong-suk",
+      "name": "Kim Kyong-suk",
+      "sex": "F",
+      "birth": {
+        "value": "1951"
+      },
+      "fatherId": "kim-il-sung",
+      "motherId": "kim-song-ae"
+    },
+    {
+      "id": "kim-kyong-jin",
+      "name": "Kim Kyong-jin",
+      "sex": "F",
+      "birth": {
+        "value": "1952"
+      },
+      "fatherId": "kim-il-sung",
+      "motherId": "kim-song-ae"
+    },
+    {
+      "id": "kim-pyong-il",
+      "name": "Kim Pyong-il",
+      "sex": "M",
+      "birth": {
+        "value": "1954-08-10"
+      },
+      "fatherId": "kim-il-sung",
+      "motherId": "kim-song-ae"
+    },
+    {
+      "id": "kim-yong-il",
+      "name": "Kim Yong-il",
+      "sex": "M",
+      "birth": {
+        "value": "1955"
+      },
+      "death": {
+        "value": "2000"
+      },
+      "deceased": true,
+      "fatherId": "kim-il-sung",
+      "motherId": "kim-song-ae"
+    },
+    {
+      "id": "jegal",
+      "name": "Jegal?",
+      "sex": "F",
+      "birth": {
+        "value": "1951"
+      },
+      "notes": "Kim Il-sung's private nurse. Surname uncertain. Birth year estimated."
+    },
+    {
+      "id": "kim-hyun",
+      "name": "Kim Hyun",
+      "sex": "M",
+      "birth": {
+        "value": "1971"
+      },
+      "death": {
+        "value": "2001"
+      },
+      "deceased": true,
+      "fatherId": "kim-il-sung",
+      "motherId": "jegal",
+      "notes": "Illegitimate son. Registered as \"Jang Hyun\" on Jang Song-thaek's family register. Studied in Moscow. Executed in 2001."
+    },
+    {
+      "id": "kim-jong-il",
+      "name": "Kim Jong-il",
+      "sex": "M",
+      "birth": {
+        "value": "1941-02-16"
+      },
+      "death": {
+        "value": "2011-12-17"
+      },
+      "deceased": true,
+      "fatherId": "kim-il-sung",
+      "motherId": "kim-jong-suk"
+    },
+    {
+      "id": "hong-il-chon",
+      "name": "Hong Il-chon",
+      "sex": "F",
+      "birth": {
+        "value": "1942"
+      }
+    },
+    {
+      "id": "song-hye-rim",
+      "name": "Song Hye-rim",
+      "sex": "F",
+      "birth": {
+        "value": "1937"
+      },
+      "death": {
+        "value": "2002"
+      },
+      "deceased": true
+    },
+    {
+      "id": "kim-young-sook",
+      "name": "Kim Young-sook",
+      "sex": "F",
+      "birth": {
+        "value": "1947"
+      }
+    },
+    {
+      "id": "ko-yong-hui",
+      "name": "Ko Yong-hui",
+      "sex": "F",
+      "birth": {
+        "value": "1953-06-26"
+      },
+      "death": {
+        "value": "2004-08-13"
+      },
+      "deceased": true
+    },
+    {
+      "id": "kim-hye-kyung",
+      "name": "Kim Hye-kyung",
+      "sex": "F",
+      "birth": {
+        "value": "1968"
+      },
+      "fatherId": "kim-jong-il",
+      "motherId": "hong-il-chon"
+    },
+    {
+      "id": "kim-jong-nam",
+      "name": "Kim Jong-nam",
+      "sex": "M",
+      "birth": {
+        "value": "1971-05-10"
+      },
+      "death": {
+        "value": "2017-02-13"
+      },
+      "deceased": true,
+      "fatherId": "kim-jong-il",
+      "motherId": "song-hye-rim"
+    },
+    {
+      "id": "kim-han-sol",
+      "name": "Kim Han-sol",
+      "sex": "M",
+      "birth": {
+        "value": "1995-06-16"
+      },
+      "fatherId": "kim-jong-nam"
+    },
+    {
+      "id": "kim-sol-song",
+      "name": "Kim Sol-song",
+      "sex": "F",
+      "birth": {
+        "value": "1974-10-08"
+      },
+      "fatherId": "kim-jong-il",
+      "motherId": "kim-young-sook"
+    },
+    {
+      "id": "kim-jong-chol",
+      "name": "Kim Jong-chol",
+      "sex": "M",
+      "birth": {
+        "value": "1981-09-25"
+      },
+      "fatherId": "kim-jong-il",
+      "motherId": "ko-yong-hui"
+    },
+    {
+      "id": "kim-yo-jong",
+      "name": "Kim Yo-jong",
+      "sex": "F",
+      "birth": {
+        "value": "1987-09-26"
+      },
+      "fatherId": "kim-jong-il",
+      "motherId": "ko-yong-hui"
+    },
+    {
+      "id": "kim-jong-un",
+      "name": "Kim Jong-un",
+      "sex": "M",
+      "birth": {
+        "value": "1984-01-08"
+      },
+      "fatherId": "kim-jong-il",
+      "motherId": "ko-yong-hui"
+    },
+    {
+      "id": "ri-sol-ju",
+      "name": "Ri Sol-ju",
+      "sex": "F",
+      "birth": {
+        "value": "1989"
+      }
+    },
+    {
+      "id": "kim-ju-ae",
+      "name": "Kim Ju-ae",
+      "sex": "F",
+      "birth": {
+        "value": "2013"
+      },
+      "fatherId": "kim-jong-un",
+      "motherId": "ri-sol-ju"
+    },
+    {
+      "id": "kim-kyong-hui",
+      "name": "Kim Kyong-hui",
+      "sex": "F",
+      "birth": {
+        "value": "1946-08-30"
+      },
+      "fatherId": "kim-il-sung",
+      "motherId": "kim-jong-suk"
+    },
+    {
+      "id": "jang-song-thaek",
+      "name": "Jang Song-thaek",
+      "sex": "M",
+      "birth": {
+        "value": "1946-02-02"
+      },
+      "death": {
+        "value": "2013-12-12"
+      },
+      "deceased": true
+    }
+  ],
+  "marriages": [
+    {
+      "id": "m-ilsung-jongsuk",
+      "person1Id": "kim-il-sung",
+      "person2Id": "kim-jong-suk",
+      "start": {
+        "value": "1941"
+      },
+      "end": {
+        "value": "1949"
+      }
+    },
+    {
+      "id": "m-ilsung-songae",
+      "person1Id": "kim-il-sung",
+      "person2Id": "kim-song-ae",
+      "start": {
+        "value": "1952"
+      }
+    },
+    {
+      "id": "m-ilsung-jegal",
+      "person1Id": "kim-il-sung",
+      "person2Id": "jegal",
+      "start": {
+        "value": "1970"
+      },
+      "end": {
+        "value": "1972"
+      },
+      "divorced": true
+    },
+    {
+      "id": "m-jongil-hong",
+      "person1Id": "kim-jong-il",
+      "person2Id": "hong-il-chon",
+      "start": {
+        "value": "1966"
+      },
+      "end": {
+        "value": "1969"
+      },
+      "divorced": true
+    },
+    {
+      "id": "m-jongil-song",
+      "person1Id": "kim-jong-il",
+      "person2Id": "song-hye-rim",
+      "start": {
+        "value": "1970"
+      },
+      "end": {
+        "value": "2002"
+      }
+    },
+    {
+      "id": "m-jongil-youngsook",
+      "person1Id": "kim-jong-il",
+      "person2Id": "kim-young-sook",
+      "start": {
+        "value": "1974"
+      }
+    },
+    {
+      "id": "m-jongil-ko",
+      "person1Id": "kim-jong-il",
+      "person2Id": "ko-yong-hui",
+      "start": {
+        "value": "1977"
+      },
+      "end": {
+        "value": "2004"
+      }
+    },
+    {
+      "id": "m-jongun-ri",
+      "person1Id": "kim-jong-un",
+      "person2Id": "ri-sol-ju",
+      "start": {
+        "value": "2009"
+      }
+    },
+    {
+      "id": "m-kyonghui-jang",
+      "person1Id": "jang-song-thaek",
+      "person2Id": "kim-kyong-hui",
+      "start": {
+        "value": "1972"
+      },
+      "end": {
+        "value": "2013"
+      }
+    }
+  ],
+  "events": []
+}

@@ -124,7 +124,7 @@ export function TimelineCanvas(props: TimelineCanvasProps) {
   const centerOffset = topPadding;
   const height = topPadding + bottomPadding + totalSpan;
   const innerWidth = width - leftPadding - rightPadding;
-  const { svgRef, viewport, handleWheel, handlePointerDown, handlePointerMove, clearDragState } = useSvgViewport(width, height);
+  const { svgRef, translateGroupRef, scaleGroupRef, handleWheel, handlePointerDown, handlePointerMove, handlePointerUp, clearDragState } = useSvgViewport();
 
   const yearToX = (year: number) =>
     leftPadding + ((year - layout.range.startYear) / Math.max(1, layout.range.endYear - layout.range.startYear)) * innerWidth;
@@ -189,7 +189,8 @@ export function TimelineCanvas(props: TimelineCanvasProps) {
         onWheel={handleWheel}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
-        onPointerUp={clearDragState}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
         onPointerLeave={clearDragState}
       >
         <defs>
@@ -212,7 +213,8 @@ export function TimelineCanvas(props: TimelineCanvasProps) {
         </defs>
 
         <rect x="0" y="0" width={width} height={height} fill="#050607" rx="18" />
-        <g transform={`translate(${viewport.translateX} ${viewport.translateY}) scale(${viewport.scale})`}>
+        <g ref={translateGroupRef}>
+          <g ref={scaleGroupRef}>
           <line x1={leftPadding} x2={width - rightPadding} y1={height - 24} y2={height - 24} className="baseline" />
 
           {Array.from({ length: layout.dataRange.endYear - layout.dataRange.startYear + 1 }, (_, index) => {
@@ -359,6 +361,7 @@ export function TimelineCanvas(props: TimelineCanvasProps) {
             });
           })}
 
+          </g>
         </g>
       </svg>
     </section>
